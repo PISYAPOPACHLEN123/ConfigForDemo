@@ -1,0 +1,19 @@
+  Пароль — P@ssw0rd
+
+  # nmtui
+  Set system hostname – hq-cli.au-team.irpo
+  esc
+  Edit a connection
+  Удаляем все подключения
+  Добавляем новые:
+
+  1. vlan200
+  profile name - vlan200
+  device – ens18.200
+  parent – ens18
+  VLAN id – 200
+  IPv4 configuration – automatic
+  IPv6 configuration – disabled
+  Перезапускаем адаптер
+
+  # Reboot

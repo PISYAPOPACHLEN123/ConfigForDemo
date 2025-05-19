@@ -1,0 +1,55 @@
+ Пользователь — root
+  Пароль — toor
+
+  # nmtui
+  Set system hostname – hq-srv.au-team.irpo
+  esc
+  Edit a connection
+  Удаляем все подключения
+  Добавляем новые:
+
+  1. vlan100
+  profile name - vlan100
+  device – ens18.100
+  parent – ens18
+  VLAN id – 100
+  IPv4 configuration – manual
+  addresses 192.168.1.2/26
+  gateway 192.168.1.1
+  DNS servers 8.8.8.8
+  IPv6 configuration – disabled
+
+  Перезапускаем адаптер
+ # dnf install webmin -y
+
+  # timedatectl set-timezone Europe/Moscow
+    		
+# useradd sshuser -u 1010
+  # asswd sshuser
+  Вводим пароль согласно заданию - P@ssw0rd
+  # usermod –aG wheel sshuser
+  # usermod –aG root sshuser
+  # setenforce 0
+
+  # nano /etc/selinux/config
+  Заменяем enforcing на permissive
+  ctrl + o ctrl + x
+
+  # nano /etc/ssh/sshd_config
+  Вводим:
+  port 2024
+  MaxAuthTries 2
+  AllowUsers sshuser
+  Banner /etc/ssh/banner
+  ctrl + o ctrl + x
+
+  # nano /etc/ssh/banner
+  Заполняем файл согласно заданию - Auth
+  ctrl + o ctrl + x
+
+  # nano /etc/sudoers
+  sshuser  ALL=(ALL)    NOPASSWD:  ALL
+  ctrl + o ctrl + x
+
+  # systemctl enable sshd --now
+  # Reboot

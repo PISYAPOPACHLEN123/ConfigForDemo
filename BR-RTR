@@ -1,0 +1,96 @@
+Пользователь — root
+Пароль — toor
+
+# nmtui
+Set system hostname – br-rtr.au-team.irpo
+esc
+Edit a connection
+Удаляем все подключения
+Добавляем новые:
+
+1. ens18
+Profile name – ens18
+Device – ens18
+IPv4 configuration - manual
+Addresses – 172.16.5.2/28
+Gateway – 172.16.5.1
+DNS servers - 8.8.8.8
+IPv6 configuration – disabled
+
+2. ens19
+Profile name – ens19
+Device – ens19
+IPv4 configuration - manual
+Addresses – 192.168.3.1/27
+IPv6 configuration – disabled
+
+3. tun1
+profile name – tun1
+device – tun1
+mode – gre
+parent – ens18
+local ip – 172.16.5.2
+remote ip – 172.16.4.2
+IPv4 configuration – manual
+addresses 172.16.1.2/30
+IPv6 configuration – disabled
+
+Перезапускаем все адаптеры
+# Reboot
+    		
+# Настраиваем зоны firewall BR-RTR:
+# systemctl enable --now firewalld
+
+# firewall-cmd --zone=external --change-interface=ens18 --permanent
+# firewall-cmd --zone=internal --change-interface=ens19 --permanent
+# firewall-cmd --zone=trusted --change-interface=tun1 --permanent
+# firewall-cmd --zone=internal --add-forward --permanent
+# firewall-cmd --zone=external --add-service=gre --permanent
+# firewall-cmd --reload
+# reboot
+
+# firewall-cmd --get-active-zones
+проверяем чтобы все адаптеры были на своих местах
+    		
+# Аналогично редачим конфиг BR-RTR:
+# nano /etc/net/sysctl.conf
+net.ipv4.ip_forward = 0 заменить net.ipv4.ip_forward = 1
+net.ipv4.conf.default.rp_filter = 1 заменить net.ipv4.conf.default.rp_filter = 0
+ctrl + o ctrl + x
+
+# nano /etc/frr/daemons
+osfd=no меняем на ospfd=yes
+ctrl + o ctrl + x
+
+# systemctl enable --now frr
+    		
+# Переходим в настройку интерфейса:
+# vtysh
+# configure
+# router ospf
+# passive-interface default
+# network 172.16.1.0/30 area 0
+# network 192.168.3.0/27 area 0
+# exit
+# interface tun1
+# ip ospf authentication message-digest
+# ip ospf message-digest-key 1 md5 tun1pass
+# no ip ospf passive
+# exit
+# exit
+# write memory
+# exit
+    		
+# Создаём учетные записи для роутера:
+# nmcli connection modify tun1 ip-tunnel.ttl 64
+
+# timedatectl set-timezone Europe/Moscow
+
+# useradd net_admin
+# passwd net_admin
+Вводим пароль согласно заданию P@$$w0rd
+# usermod –aG wheel net_admin
+# usermod –aG root net_admin
+# nano /etc/sudoers
+net_admin  ALL=(ALL)    NOPASSWD:  ALL
+# reboot
