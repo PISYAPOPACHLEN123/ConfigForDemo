@@ -9,6 +9,12 @@ set prompt "#"
 spawn bash
 expect -re $prompt
 
+# Установка NetworkManager
+send "apt-get update\r"
+expect -re $prompt
+send "apt-get install -y network-manager\r"
+expect -re $prompt
+
 # Установка имени хоста
 send "hostnamectl set-hostname $hostname\r"
 expect -re $prompt
@@ -54,9 +60,13 @@ send "firewall-cmd --get-active-zones\r"
 expect -re $prompt
 
 # Изменение /etc/sysctl.conf
-send "sed -i 's/net.ipv4.ip_forward = 0/net.ipv4.ip_forward = 1/' /etc/sysctl.conf\r"
+send "cat > /tmp/sysctl_temp.conf << 'EOF'\r"
+send "$(cat /etc/sysctl.conf 2>/dev/null | grep -v 'net.ipv4.ip_forward = ' | grep -v 'net.ipv4.conf.default.rp_filter = ')\r"
+send "net.ipv4.ip_forward = 1\r"
+send "net.ipv4.conf.default.rp_filter = 0\r"
+send "EOF\r"
 expect -re $prompt
-send "sed -i 's/net.ipv4.conf.default.rp_filter = 1/net.ipv4.conf.default.rp_filter = 0/' /etc/sysctl.conf\r"
+send "mv /tmp/sysctl_temp.conf /etc/sysctl.conf\r"
 expect -re $prompt
 
 # Применение изменений sysctl
