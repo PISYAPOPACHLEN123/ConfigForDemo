@@ -22,8 +22,6 @@ firewall-cmd --zone=internal --change-interface=ens19 --permanent
 firewall-cmd --zone=internal --change-interface=ens20 --permanent
 firewall-cmd --zone=internal --add-forward --permanent
 firewall-cmd --reload
-# Reboot the system
-reboot
 # Verify active firewall zones
 firewall-cmd --get-active-zones
 # Modify IP forwarding settings
