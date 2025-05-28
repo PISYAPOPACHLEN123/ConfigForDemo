@@ -60,15 +60,9 @@ send "firewall-cmd --get-active-zones\r"
 expect -re $prompt
 
 # Изменение /etc/net/sysctl.conf
-send "if [ ! -f /etc/net/sysctl.conf ]; then echo > /etc/net/sysctl.conf; fi\r"
+send "sed -i 's/^net.ipv4.ip_forward = .*/net.ipv4.ip_forward = 1/' /etc/net/sysctl.conf\r"
 expect -re $prompt
-send "cat > /tmp/sysctl_temp.conf << 'EOF'\r"
-send "$(cat /etc/net/sysctl.conf 2>/dev/null | grep -v 'net.ipv4.ip_forward =' | grep -v 'net.ipv4.conf.default.rp_filter =' || echo '')\r"
-send "net.ipv4.ip_forward = 1\r"
-send "net.ipv4.conf.default.rp_filter = 0\r"
-send "EOF\r"
-expect -re $prompt
-send "mv /tmp/sysctl_temp.conf /etc/net/sysctl.conf\r"
+send "sed -i 's/^net.ipv4.conf.default.rp_filter = .*/net.ipv4.conf.default.rp_filter = 0/' /etc/net/sysctl.conf\r"
 expect -re $prompt
 
 # Применение изменений sysctl
