@@ -1,83 +1,72 @@
 #!/usr/bin/expect -f
 
-# Устанавливаем таймаут для ожидания ответа
+# Настройка переменных
 set timeout 60
+set hostname "ISP"
+set prompt "#"
 
-# Запускаем bash в интерактивном режиме
+# Запуск терминала
 spawn bash
+expect -re $prompt
 
-# Ожидаем приглашение командной строки
-expect {
-    -re {[$#] } {
-        # Установка имени хоста
-        send "hostnamectl set-hostname ISP\r"
-        expect -re {[$#] }
-        
-        # Удаление всех существующих сетевых подключений
-        send "nmcli connection show | grep -v \"NAME\" | awk '{print \$1}' | while read -r conn; do nmcli connection delete \"\$conn\"; done\r"
-        expect -re {[$#] }
-        
-        # Добавление подключения для ens18
-        send "nmcli connection add type ethernet con-name ens18 ifname ens18 ipv4.method auto ipv6.method disabled\r"
-        expect -re {[$#] }
-        
-        # Добавление подключения для ens19
-        send "nmcli connection add type ethernet con-name ens19 ifname ens19 ipv4.method manual ipv4.addresses 172.16.4.1/28 ipv6.method disabled\r"
-        expect -re {[$#] }
-        
-        # Добавление подключения для ens20
-        send "nmcli connection add type ethernet con-name ens20 ifname ens20 ipv4.method manual ipv4.addresses 172.16.5.1/28 ipv6.method disabled\r"
-        expect -re {[$#] }
-        
-        # Перезапуск сетевых адаптеров
-        send "nmcli networking off\r"
-        expect -re {[$#] }
-        send "nmcli networking on\r"
-        expect -re {[$#] }
-        
-        # Включение и запуск firewalld
-        send "systemctl enable --now firewalld\r"
-        expect -re {[$#] }
-        
-        # Назначение интерфейсов зонам firewalld
-        send "firewall-cmd --zone=external --change-interface=ens18 --permanent\r"
-        expect -re {[$#] }
-        send "firewall-cmd --zone=internal --change-interface=ens19 --permanent\r"
-        expect -re {[$#] }
-        send "firewall-cmd --zone=internal --change-interface=ens20 --permanent\r"
-        expect -re {[$#] }
-        send "firewall-cmd --zone=internal --add-forward --permanent\r"
-        expect -re {[$#] }
-        send "firewall-cmd --reload\r"
-        expect -re {[$#] }
-        
-        # Проверка активных зон firewalld
-        send "firewall-cmd --get-active-zones\r"
-        expect -re {[$#] }
-        
-        # Изменение настроек IP forwarding
-        send "sed -i 's/net.ipv4.ip_forward = 0/net.ipv4.ip_forward = 1/' /etc/sysctl.conf\r"
-        expect -re {[$#] }
-        send "sed -i 's/net.ipv4.conf.default.rp_filter = 1/net.ipv4.conf.default.rp_filter = 0/' /etc/sysctl.conf\r"
-        expect -re {[$#] }
-        
-        # Применение изменений sysctl
-        send "sysctl -p\r"
-        expect -re {[$#] }
-        
-        # Установка часового пояса
-        send "timedatectl set-timezone Europe/Moscow\r"
-        expect -re {[$#] }
-        
-        # Завершение сессии
-        send "exit\r"
-        expect eof
-    }
-    timeout {
-        puts "Timeout waiting for prompt"
-        exit 1
-    }
-}
+# Установка имени хоста
+send "hostnamectl set-hostname $hostname\r"
+expect -re $prompt
 
-# Возвращаем управление терминалу
-interact
+# Удаление всех существующих подключений
+send "nmcli connection show | grep -v NAME | awk '{print \$1}' | xargs -I {} nmcli connection delete {}\r"
+expect -re $prompt
+
+# Создание подключения для ens18
+send "nmcli connection add type ethernet con-name ens18 ifname ens18 ipv4.method auto ipv6.method disabled\r"
+expect -re $prompt
+
+# Создание подключения для ens19
+send "nmcli connection add type ethernet con-name ens19 ifname ens19 ipv4.method manual ipv4.addresses 172.16.4.1/28 ipv6.method disabled\r"
+expect -re $prompt
+
+# Создание подключения для ens20
+send "nmcli connection add type ethernet con-name ens20 ifname ens20 ipv4.method manual ipv4.addresses 172.16.5.1/28 ipv6.method disabled\r"
+expect -re $prompt
+
+# Установка firewalld
+send "apt-get install -y firewalld\r"
+expect -re $prompt
+
+# Включение и запуск firewalld
+send "systemctl enable --now firewalld\r"
+expect -re $prompt
+
+# Настройка зон firewalld
+send "firewall-cmd --zone=external --change-interface=ens18 --permanent\r"
+expect -re $prompt
+send "firewall-cmd --zone=internal --change-interface=ens19 --permanent\r"
+expect -re $prompt
+send "firewall-cmd --zone=internal --change-interface=ens20 --permanent\r"
+expect -re $prompt
+send "firewall-cmd --zone=internal --add-forward --permanent\r"
+expect -re $prompt
+send "firewall-cmd --reload\r"
+expect -re $prompt
+
+# Проверка активных зон
+send "firewall-cmd --get-active-zones\r"
+expect -re $prompt
+
+# Изменение /etc/sysctl.conf
+send "sed -i 's/net.ipv4.ip_forward = 0/net.ipv4.ip_forward = 1/' /etc/sysctl.conf\r"
+expect -re $prompt
+send "sed -i 's/net.ipv4.conf.default.rp_filter = 1/net.ipv4.conf.default.rp_filter = 0/' /etc/sysctl.conf\r"
+expect -re $prompt
+
+# Применение изменений sysctl
+send "sysctl -p\r"
+expect -re $prompt
+
+# Установка часового пояса
+send "timedatectl set-timezone Europe/Moscow\r"
+expect -re $prompt
+
+# Завершение
+send "exit\r"
+expect eof
