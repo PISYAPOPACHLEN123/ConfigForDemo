@@ -9,10 +9,10 @@ set prompt "#"
 spawn bash
 expect -re $prompt
 
-# Установка NetworkManager
+# Установка NetworkManager-daemon
 send "apt-get update\r"
 expect -re $prompt
-send "apt-get install -y network-manager\r"
+send "apt-get install -y NetworkManager-daemon\r"
 expect -re $prompt
 
 # Установка имени хоста
@@ -59,18 +59,18 @@ expect -re $prompt
 send "firewall-cmd --get-active-zones\r"
 expect -re $prompt
 
-# Изменение /etc/sysctl.conf
+# Изменение /etc/net/sysctl.conf
 send "cat > /tmp/sysctl_temp.conf << 'EOF'\r"
-send "$(cat /etc/sysctl.conf 2>/dev/null | grep -v 'net.ipv4.ip_forward = ' | grep -v 'net.ipv4.conf.default.rp_filter = ')\r"
+send "$(cat /etc/net/sysctl.conf 2>/dev/null | grep -v 'net.ipv4.ip_forward = ' | grep -v 'net.ipv4.conf.default.rp_filter = ' || echo '')\r"
 send "net.ipv4.ip_forward = 1\r"
 send "net.ipv4.conf.default.rp_filter = 0\r"
 send "EOF\r"
 expect -re $prompt
-send "mv /tmp/sysctl_temp.conf /etc/sysctl.conf\r"
+send "mv /tmp/sysctl_temp.conf /etc/net/sysctl.conf\r"
 expect -re $prompt
 
 # Применение изменений sysctl
-send "sysctl -p\r"
+send "sysctl -p /etc/net/sysctl.conf\r"
 expect -re $prompt
 
 # Установка часового пояса
