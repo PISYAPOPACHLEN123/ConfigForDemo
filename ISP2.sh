@@ -1,6 +1,4 @@
 #!/bin/bash
-# Exit on any error to prevent partial execution
-set -e
 # Set system hostname
 hostnamectl set-hostname ISP
 # Delete all existing connections
@@ -16,8 +14,6 @@ nmcli connection add type ethernet con-name ens20 ifname ens20 ipv4.method manua
 # Restart all network adapters
 nmcli networking off
 nmcli networking on
-# Reboot the system
-reboot
 # Enable and start firewalld
 systemctl enable --now firewalld
 # Assign interfaces to firewall zones
@@ -37,5 +33,3 @@ sed -i 's/net.ipv4.conf.default.rp_filter = 1/net.ipv4.conf.default.rp_filter = 
 sysctl -p
 # Set timezone to Europe/Moscow
 timedatectl set-timezone Europe/Moscow
-# Final reboot
-reboot
