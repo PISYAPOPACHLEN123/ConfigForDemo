@@ -29,16 +29,22 @@ expect -re $prompt
 send "nmcli connection show | grep -v NAME | awk '{print \$1}' | xargs -I {} nmcli connection delete {}\r"
 expect -re $prompt
 
-# Создание подключения для ens18
+# Создание и активация подключения для ens18
 send "nmcli connection add type ethernet con-name ens18 ifname ens18 ipv4.method auto ipv6.method disabled\r"
 expect -re $prompt
-
-# Создание подключения для ens19
-send "nmcli connection add type ethernet con-name ens19 ifname ens19 ipv4.method manual ipv4.addresses 172.16.4.1/28 ipv6.method disabled\r"
+send "nmcli connection up ens18\r"
 expect -re $prompt
 
-# Создание подключения для ens20
+# Создание и активация подключения для ens19
+send "nmcli connection add type ethernet con-name ens19 ifname ens19 ipv4.method manual ipv4.addresses 172.16.4.1/28 ipv6.method disabled\r"
+expect -re $prompt
+send "nmcli connection up ens19\r"
+expect -re $prompt
+
+# Создание и активация подключения для ens20
 send "nmcli connection add type ethernet con-name ens20 ifname ens20 ipv4.method manual ipv4.addresses 172.16.5.1/28 ipv6.method disabled\r"
+expect -re $prompt
+send "nmcli connection up ens20\r"
 expect -re $prompt
 
 # Установка firewalld
