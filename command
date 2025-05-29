@@ -22,3 +22,4 @@ expect *imya_skripta.exp*
 chatGPT (slabiy) v terminale:
 curl -sSL https://raw.githubusercontent.com/aandrew-me/tgpt/main/install | bash -s /usr/local/bin
 tgpt --provider phind "zdes pishem zapros v kovichkah"
+tgpt -h - posmotret modelki i tam po melocham
