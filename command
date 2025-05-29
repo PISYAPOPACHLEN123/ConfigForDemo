@@ -33,3 +33,8 @@ tgpt --provider phind "zdes pishem zapros v kovichkah" | less
 ---google v terminale
 apt-get install surfraw
 surfraw google *zapros*
+
+
+--cartinki v terminale
+apt-get install catimg
+catimg *image.png*
