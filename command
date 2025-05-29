@@ -28,3 +28,8 @@ tgpt -h - posmotret modelki i tam po melocham
 esli vivod bolshoi to usaite comandy:
 tgpt --provider phind "zdes pishem zapros v kovichkah" | less
 -q
+
+
+---google v terminale
+apt-get install surfraw
+surfraw google *zapros*
