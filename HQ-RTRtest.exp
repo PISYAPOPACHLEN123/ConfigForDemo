@@ -115,22 +115,28 @@ expect -re $prompt
 
 # Настройка OSPF через vtysh
 spawn vtysh
-set timeout 120  ;# Увеличиваем тайм-аут для vtysh
+set timeout 120
 expect {
-    "hq-rtr#" {
-        send_user "Debug: vtysh started successfully\n"
+    -re "\\S+#" {
+        send_user "Debug: vtysh started successfully with prompt: $expect_out(0,string)\n"
         send "show running-config\r"
-        expect "hq-rtr#"
+        expect -re "\\S+#"
     }
     timeout {
         send_user "Debug: Timed out waiting for vtysh prompt\n"
+        send "exit\r"
+        expect -re $prompt
+        exit 1
+    }
+    eof {
+        send_user "Debug: vtysh closed unexpectedly\n"
         exit 1
     }
 }
 send "configure\r"
 expect {
-    "hq-rtr(config)#" {
-        send_user "Debug: Entered configure mode\n"
+    -re "\\S+\\(config\\)#" {
+        send_user "Debug: Entered configure mode with prompt: $expect_out(0,string)\n"
     }
     timeout {
         send_user "Debug: Timed out waiting for configure prompt\n"
@@ -138,31 +144,31 @@ expect {
     }
 }
 send "router ospf\r"
-expect "hq-rtr(config-router)#"
+expect -re "\\S+\\(config-router\\)#"
 send "passive-interface default\r"
-expect "hq-rtr(config-router)#"
+expect -re "\\S+\\(config-router\\)#"
 send "network 172.16.1.0/30 area 0\r"
-expect "hq-rtr(config-router)#"
+expect -re "\\S+\\(config-router\\)#"
 send "network 192.168.1.0/26 area 0\r"
-expect "hq-rtr(config-router)#"
+expect -re "\\S+\\(config-router\\)#"
 send "network 192.168.2.0/28 area 0\r"
-expect "hq-rtr(config-router)#"
+expect -re "\\S+\\(config-router\\)#"
 send "exit\r"
-expect "hq-rtr(config)#"
+expect -re "\\S+\\(config\\)#"
 send "interface tun1\r"
-expect "hq-rtr(config-if)#"
+expect -re "\\S+\\(config-if\\)#"
 send "ip ospf authentication message-digest\r"
-expect "hq-rtr(config-if)#"
+expect -re "\\S+\\(config-if\\)#"
 send "ip ospf message-digest-key 1 md5 tun1pass\r"
-expect "hq-rtr(config-if)#"
+expect -re "\\S+\\(config-if\\)#"
 send "no ip ospf passive\r"
-expect "hq-rtr(config-if)#"
+expect -re "\\S+\\(config-if\\)#"
 send "exit\r"
-expect "hq-rtr(config)#"
+expect -re "\\S+\\(config\\)#"
 send "end\r"
-expect "hq-rtr#"
+expect -re "\\S+#"
 send "write memory\r"
-expect "hq-rtr#"
+expect -re "\\S+#"
 send "exit\r"
 expect -re $prompt
 
