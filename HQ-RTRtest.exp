@@ -105,7 +105,7 @@ expect -re $prompt
 spawn bash
 expect -re $prompt
 
-send "apt-get install frr\r"
+send "apt-get install frr -y\r"
 expect -re $prompt
 
 # Изменение /etc/frr/daemons
