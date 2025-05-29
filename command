@@ -11,7 +11,7 @@ nano *fail* - redaktirovat fail
 ping *addres ili domen* - proverit svaz
 
 
-zapusk skripta:
+---zapusk skripta:
 chmod +x *imya_skripta.sh*
 sudo ./*imya_skripta.sh*
 ili
@@ -19,7 +19,12 @@ chmod +x *imya_skripta.exp*
 expect *imya_skripta.exp*
 
 
-chatGPT (slabiy) v terminale:
+---chatGPT (slabiy) v terminale:
 curl -sSL https://raw.githubusercontent.com/aandrew-me/tgpt/main/install | bash -s /usr/local/bin
 tgpt --provider phind "zdes pishem zapros v kovichkah"
+
 tgpt -h - posmotret modelki i tam po melocham
+
+esli vivod bolshoi to usaite comandy:
+tgpt --provider phind "zdes pishem zapros v kovichkah" | less
+-q
