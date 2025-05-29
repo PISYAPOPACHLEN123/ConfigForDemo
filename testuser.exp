@@ -5,3 +5,5 @@ set prompt "#"
 
 send "useradd test -p pa\$word\r"
 expect -re $prompt
+send "exit\r"
+expect eof
