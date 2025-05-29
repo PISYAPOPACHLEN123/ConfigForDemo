@@ -16,7 +16,6 @@ ping *addres ili domen* - proverit svaz
 chmod +x *imya_skripta.sh*
 sudo ./*imya_skripta.sh*
 ili
-chmod +x *imya_skripta.exp*
 expect *imya_skripta.exp*
 
 
