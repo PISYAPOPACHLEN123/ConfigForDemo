@@ -4,7 +4,7 @@
 set timeout 60
 set hostname "hq-rtr.au-team.irpo"
 set prompt "#"
-set password "P@$\\$\\w0rd"  ;# Явно задаём пароль для пользователя net_admin
+set password "P@\$\$w0rd"  ;# Явно задаём пароль для пользователя net_admin
 
 # Запуск терминала
 spawn bash
@@ -229,15 +229,35 @@ send "timedatectl set-timezone Europe/Moscow\r"
 expect -re $prompt
 
 # Создание пользователя net_admin
-spawn useradd net_admin
-expect eof
-
+send "useradd net_admin\r"
+expect -re $prompt
 spawn passwd net_admin
-expect "New password:"
-send "P@\$\$w0rd\r"
-expect "Retype new password:"
-send "P@\$\$w0rd\r"
-expect eof
+set timeout 120
+expect {
+    -re "New password:" {
+        send_user "Debug: Found 'New password:' prompt\n"
+        send "$password\r"
+    }
+    -re "Enter new.*password:" {
+        send_user "Debug: Found alternate 'Enter new password:' prompt\n"
+        send "$password\r"
+    }
+    timeout {
+        send_user "Debug: Timed out waiting for password prompt\n"
+        exit 1
+    }
+}
+expect {
+    -re "Retype new password:" {
+        send_user "Debug: Found 'Retype new password:' prompt\n"
+        send "$password\r"
+    }
+    timeout {
+        send_user "Debug: Timed out waiting for retype password prompt\n"
+        exit 1
+    }
+}
+expect -re $prompt
 
 spawn bash
 expect -re $prompt
