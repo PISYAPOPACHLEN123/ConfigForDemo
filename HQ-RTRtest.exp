@@ -43,13 +43,13 @@ send "nmcli connection up ens19\r"
 expect -re $prompt
 
 # Создание и активация VLAN100
-send "nmcli connection add type vlan con-name vlan100 ifname ens19.100 dev ens19 id 100 ipv4.method manual ipv4.addresses 192.168.1.1/26\r"
+send "nmcli connection add type vlan con-name vlan100 ifname ens19.100 dev ens19 id 100 ipv4.method manual ipv4.addresses 192.168.1.1/26 ipv6.method disabled\r"
 expect -re $prompt
 send "nmcli connection up vlan100\r"
 expect -re $prompt
 
 # Создание и активация VLAN200
-send "nmcli connection add type vlan con-name vlan200 ifname ens19.200 dev ens19 id 200 ipv4.method manual ipv4.addresses 192.168.2.1/28\r"
+send "nmcli connection add type vlan con-name vlan200 ifname ens19.200 dev ens19 id 200 ipv4.method manual ipv4.addresses 192.168.2.1/28 ipv6.method disabled\r"
 expect -re $prompt
 send "nmcli connection up vlan200\r"
 expect -re $prompt
