@@ -14,6 +14,8 @@ send "apt-get update\r"
 expect -re $prompt
 send "apt-get install -y NetworkManager-daemon\r"
 expect -re $prompt
+send "systemctl daemon-reload\r"
+expect -re $prompt
 
 # Включение и запуск NetworkManager
 send "systemctl enable NetworkManager\r"
