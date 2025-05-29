@@ -1,0 +1,7 @@
+#!/usr/bin/expect -f
+
+set timeout 60
+set prompt "#"
+
+send "useradd test -p pa\$word\r"
+expect -re $prompt
