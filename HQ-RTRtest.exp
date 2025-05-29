@@ -234,12 +234,8 @@ expect -re $prompt
 spawn passwd net_admin
 set timeout 120
 expect {
-    -re "New password:" {
-        send_user "Debug: Found 'New password:' prompt\n"
-        send "$password\r"
-    }
     -re "Enter new.*password:" {
-        send_user "Debug: Found alternate 'Enter new password:' prompt\n"
+        send_user "Debug: Found 'Enter new password:' prompt\n"
         send "$password\r"
     }
     timeout {
@@ -248,7 +244,7 @@ expect {
     }
 }
 expect {
-    -re "Retype new password:" {
+    -re "Retype new.*password:" {
         send_user "Debug: Found 'Retype new password:' prompt\n"
         send "$password\r"
     }
