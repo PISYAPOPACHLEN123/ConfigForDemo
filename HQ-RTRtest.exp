@@ -115,9 +115,28 @@ expect -re $prompt
 
 # Настройка OSPF через vtysh
 spawn vtysh
-expect "hq-rtr#"
+set timeout 120  ;# Увеличиваем тайм-аут для vtysh
+expect {
+    "hq-rtr#" {
+        send_user "Debug: vtysh started successfully\n"
+        send "show running-config\r"
+        expect "hq-rtr#"
+    }
+    timeout {
+        send_user "Debug: Timed out waiting for vtysh prompt\n"
+        exit 1
+    }
+}
 send "configure\r"
-expect "hq-rtr(config)#"
+expect {
+    "hq-rtr(config)#" {
+        send_user "Debug: Entered configure mode\n"
+    }
+    timeout {
+        send_user "Debug: Timed out waiting for configure prompt\n"
+        exit 1
+    }
+}
 send "router ospf\r"
 expect "hq-rtr(config-router)#"
 send "passive-interface default\r"
@@ -140,7 +159,7 @@ send "no ip ospf passive\r"
 expect "hq-rtr(config-if)#"
 send "exit\r"
 expect "hq-rtr(config)#"
-send "exit\r"
+send "end\r"
 expect "hq-rtr#"
 send "write memory\r"
 expect "hq-rtr#"
