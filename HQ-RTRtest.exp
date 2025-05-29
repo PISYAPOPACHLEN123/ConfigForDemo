@@ -108,8 +108,14 @@ expect -re $prompt
 send "apt-get install frr -y\r"
 expect -re $prompt
 
+spawn bash
+expect -re $prompt
+
 # Изменение /etc/frr/daemons
 send "sed -i 's/^ospfd=.*/ospfd=yes/' /etc/frr/daemons\r"
+expect -re $prompt
+
+spawn bash
 expect -re $prompt
 
 # Включение и запуск frr
@@ -194,8 +200,14 @@ send "}\r"
 send "EOF\r"
 expect -re $prompt
 
+spawn bash
+expect -re $prompt
+
 # Настройка /etc/sysconfig/dhcpd
 send "echo 'DHCPDARGS=ens19.200' > /etc/sysconfig/dhcpd\r"
+expect -re $prompt
+
+spawn bash
 expect -re $prompt
 
 # Включение и запуск dhcpd
