@@ -36,5 +36,5 @@ surfraw google *zapros*
 
 
 --cartinki v terminale
-apt-get install catimg
+dnf install catimg
 catimg *image.png*
