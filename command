@@ -1,3 +1,4 @@
+--polezni comandi
 cd - eto comanda dlya peremeshenya. esli bez kataloga to vverh po katalogu
 cd *katalog*
 
