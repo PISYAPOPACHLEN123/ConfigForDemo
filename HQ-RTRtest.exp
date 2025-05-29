@@ -172,6 +172,10 @@ expect -re "\\S+#"
 send "exit\r"
 expect -re $prompt
 
+# Запуск терминала
+spawn bash
+expect -re $prompt
+
 # Настройка /etc/dhcp/dhcpd.conf
 send "cat > /etc/dhcp/dhcpd.conf << 'EOF'\r"
 send "ddns-update-style none;\r"
