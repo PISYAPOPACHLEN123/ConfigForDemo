@@ -199,6 +199,9 @@ expect -re $prompt
 send "systemctl enable --now dhcpd\r"
 expect -re $prompt
 
+spawn bash
+expect -re $prompt
+
 # Изменение TTL для tun1
 send "nmcli connection modify tun1 ip-tunnel.ttl 64\r"
 expect -re $prompt
