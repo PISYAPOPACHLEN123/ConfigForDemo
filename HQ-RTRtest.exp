@@ -4,7 +4,7 @@
 set timeout 60
 set hostname "hq-rtr.au-team.irpo"
 set prompt "#"
-set password "P@$$w0rd"
+set password "P@$$w0rd"  ;# Явно задаём пароль для пользователя net_admin
 
 # Запуск терминала
 spawn bash
