@@ -88,5 +88,6 @@ send "timedatectl set-timezone Europe/Moscow\r"
 expect -re $prompt
 
 # Завершение
+send "reboot\r"
 send "exit\r"
 expect eof
