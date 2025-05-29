@@ -1,0 +1,200 @@
+#!/usr/bin/expect -f
+
+# Настройка переменных
+set timeout 60
+set hostname "hq-rtr.au-team.irpo"
+set prompt "#"
+set password "P@$$w0rd"
+
+# Запуск терминала
+spawn bash
+expect -re $prompt
+
+# Установка и запуск NetworkManager
+send "apt-get update\r"
+expect -re $prompt
+send "apt-get install -y NetworkManager-daemon\r"
+expect -re $prompt
+send "systemctl daemon-reload\r"
+expect -re $prompt
+send "systemctl enable NetworkManager\r"
+expect -re $prompt
+send "systemctl start NetworkManager\r"
+expect -re $prompt
+
+# Установка имени хоста
+send "hostnamectl set-hostname $hostname\r"
+expect -re $prompt
+
+# Удаление всех существующих подключений
+send "nmcli connection show | grep -v NAME | awk '{print \$1}' | xargs -I {} nmcli connection delete {}\r"
+expect -re $prompt
+
+# Создание и активация подключения для ens18
+send "nmcli connection add type ethernet con-name ens18 ifname ens18 ipv4.method manual ipv4.addresses 172.16.4.2/28 ipv4.gateway 172.16.4.1 ipv4.dns 8.8.8.8 ipv6.method disabled\r"
+expect -re $prompt
+send "nmcli connection up ens18\r"
+expect -re $prompt
+
+# Создание и активация подключения для ens19
+send "nmcli connection add type ethernet con-name ens19 ifname ens19 ipv4.method disabled ipv6.method disabled\r"
+expect -re $prompt
+send "nmcli connection up ens19\r"
+expect -re $prompt
+
+# Создание и активация VLAN100
+send "nmcli connection add type vlan con-name vlan100 ifname ens19.100 dev ens19 id 100 ipv4.method manual ipv4.addresses 192.168.1.1/26\r"
+expect -re $prompt
+send "nmcli connection up vlan100\r"
+expect -re $prompt
+
+# Создание и активация VLAN200
+send "nmcli connection add type vlan con-name vlan200 ifname ens19.200 dev ens19 id 200 ipv4.method manual ipv4.addresses 192.168.2.1/28\r"
+expect -re $prompt
+send "nmcli connection up vlan200\r"
+expect -re $prompt
+
+# Создание и активация VLAN999
+send "nmcli connection add type vlan con-name vlan999 ifname ens19.999 dev ens19 id 999 ipv4.method manual ipv4.addresses 192.168.99.1/29 ipv6.method disabled\r"
+expect -re $prompt
+send "nmcli connection up vlan999\r"
+expect -re $prompt
+
+# Создание и активация GRE-туннеля tun1
+send "nmcli connection add type ip-tunnel con-name tun1 ifname tun1 mode gre dev ens18 local 172.16.4.2 remote 172.16.5.2 ipv4.method manual ipv4.addresses 172.16.1.1/30 ipv6.method disabled\r"
+expect -re $prompt
+send "nmcli connection up tun1\r"
+expect -re $prompt
+
+# Установка firewalld
+send "apt-get install -y firewalld\r"
+expect -re $prompt
+send "systemctl enable --now firewalld\r"
+expect -re $prompt
+
+# Настройка зон firewalld
+send "firewall-cmd --zone=external --change-interface=ens18 --permanent\r"
+expect -re $prompt
+send "firewall-cmd --zone=internal --change-interface=ens19.100 --permanent\r"
+expect -re $prompt
+send "firewall-cmd --zone=internal --change-interface=ens19.200 --permanent\r"
+expect -re $prompt
+send "firewall-cmd --zone=internal --change-interface=ens19.999 --permanent\r"
+expect -re $prompt
+send "firewall-cmd --zone=trusted --change-interface=tun1 --permanent\r"
+expect -re $prompt
+send "firewall-cmd --zone=internal --add-forward --permanent\r"
+expect -re $prompt
+send "firewall-cmd --zone=external --add-service=gre --permanent\r"
+expect -re $prompt
+send "firewall-cmd --reload\r"
+expect -re $prompt
+
+# Проверка активных зон
+send "firewall-cmd --get-active-zones\r"
+expect -re $prompt
+
+# Изменение /etc/net/sysctl.conf
+send "sed -i 's/^net.ipv4.ip_forward = .*/net.ipv4.ip_forward = 1/' /etc/net/sysctl.conf\r"
+expect -re $prompt
+send "sed -i 's/^net.ipv4.conf.default.rp_filter = .*/net.ipv4.conf.default.rp_filter = 0/' /etc/net/sysctl.conf\r"
+expect -re $prompt
+send "sysctl -p /etc/net/sysctl.conf\r"
+expect -re $prompt
+
+# Изменение /etc/frr/daemons
+send "sed -i 's/^ospfd=.*/ospfd=yes/' /etc/frr/daemons\r"
+expect -re $prompt
+
+# Включение и запуск frr
+send "systemctl enable --now frr\r"
+expect -re $prompt
+
+# Настройка OSPF через vtysh
+spawn vtysh
+expect "hq-rtr#"
+send "configure\r"
+expect "hq-rtr(config)#"
+send "router ospf\r"
+expect "hq-rtr(config-router)#"
+send "passive-interface default\r"
+expect "hq-rtr(config-router)#"
+send "network 172.16.1.0/30 area 0\r"
+expect "hq-rtr(config-router)#"
+send "network 192.168.1.0/26 area 0\r"
+expect "hq-rtr(config-router)#"
+send "network 192.168.2.0/28 area 0\r"
+expect "hq-rtr(config-router)#"
+send "exit\r"
+expect "hq-rtr(config)#"
+send "interface tun1\r"
+expect "hq-rtr(config-if)#"
+send "ip ospf authentication message-digest\r"
+expect "hq-rtr(config-if)#"
+send "ip ospf message-digest-key 1 md5 tun1pass\r"
+expect "hq-rtr(config-if)#"
+send "no ip ospf passive\r"
+expect "hq-rtr(config-if)#"
+send "exit\r"
+expect "hq-rtr(config)#"
+send "exit\r"
+expect "hq-rtr#"
+send "write memory\r"
+expect "hq-rtr#"
+send "exit\r"
+expect -re $prompt
+
+# Настройка /etc/dhcp/dhcpd.conf
+send "cat > /etc/dhcp/dhcpd.conf << 'EOF'\r"
+send "ddns-update-style none;\r"
+send "subnet 192.168.2.0 netmask 255.255.255.240 {\r"
+send "        option routers 192.168.2.1;\r"
+send "        range 192.168.2.2 192.168.2.14;\r"
+send "        option subnet-mask 255.255.255.240;\r"
+send "        option domain-name \"au-team.irpo\";\r"
+send "        option domain-name-servers 192.168.1.2, 8.8.8.8;\r"
+send "        default-lease-time 21600;\r"
+send "        max-lease-time 43200;\r"
+send "}\r"
+send "EOF\r"
+expect -re $prompt
+
+# Настройка /etc/sysconfig/dhcpd
+send "echo 'DHCPDARGS=ens19.200' > /etc/sysconfig/dhcpd\r"
+expect -re $prompt
+
+# Включение и запуск dhcpd
+send "systemctl enable --now dhcpd\r"
+expect -re $prompt
+
+# Изменение TTL для tun1
+send "nmcli connection modify tun1 ip-tunnel.ttl 64\r"
+expect -re $prompt
+
+# Установка часового пояса
+send "timedatectl set-timezone Europe/Moscow\r"
+expect -re $prompt
+
+# Создание пользователя net_admin
+send "useradd net_admin\r"
+expect -re $prompt
+spawn passwd net_admin
+expect "New password:"
+send "$password\r"
+expect "Retype new password:"
+send "$password\r"
+expect -re $prompt
+
+# Добавление пользователя в группы
+send "usermod -aG wheel net_admin\r"
+expect -re $prompt
+send "usermod -aG root net_admin\r"
+expect -re $prompt
+
+# Настройка /etc/sudoers
+send "echo 'net_admin  ALL=(ALL)    NOPASSWD:  ALL' >> /etc/sudoers\r"
+expect -re $prompt
+
+# Перезагрузка системы
+send "reboot\r"
+expect eof
