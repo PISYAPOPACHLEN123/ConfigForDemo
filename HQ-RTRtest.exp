@@ -102,6 +102,9 @@ expect -re $prompt
 send "sysctl -p /etc/net/sysctl.conf\r"
 expect -re $prompt
 
+spawn bash
+expect -re $prompt
+
 # Изменение /etc/frr/daemons
 send "sed -i 's/^ospfd=.*/ospfd=yes/' /etc/frr/daemons\r"
 expect -re $prompt
