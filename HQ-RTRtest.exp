@@ -105,6 +105,9 @@ expect -re $prompt
 spawn bash
 expect -re $prompt
 
+send "apt-get install frr\r"
+expect -re $prompt
+
 # Изменение /etc/frr/daemons
 send "sed -i 's/^ospfd=.*/ospfd=yes/' /etc/frr/daemons\r"
 expect -re $prompt
