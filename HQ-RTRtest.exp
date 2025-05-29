@@ -229,13 +229,7 @@ send "timedatectl set-timezone Europe/Moscow\r"
 expect -re $prompt
 
 # Создание пользователя net_admin
-send "useradd net_admin\r"
-expect -re $prompt
-spawn passwd net_admin
-expect "New password:"
-send "$password\r"
-expect "Retype new password:"
-send "$password\r"
+send "useradd net_admin -p P@$$w0rd\r"
 expect -re $prompt
 
 # Добавление пользователя в группы
