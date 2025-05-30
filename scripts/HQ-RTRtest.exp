@@ -10,7 +10,6 @@ set password "P@\$\$w0rd"  ;# Явно задаём пароль для поль
 spawn bash
 expect -re $prompt
 
-
 # Установка имени хоста
 send "hostnamectl set-hostname $hostname\r"
 expect -re $prompt
