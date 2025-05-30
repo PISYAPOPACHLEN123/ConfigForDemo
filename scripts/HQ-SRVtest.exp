@@ -48,7 +48,7 @@ expect {
     }
 }
 expect {
-    -re "Повтор нового пароля:" {
+    -re "Повторите ввод нового пароля:" {
         send "$password\r"
     }
     timeout {
