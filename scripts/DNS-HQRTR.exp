@@ -105,10 +105,6 @@ expect -re $prompt
 send "named-checkconf /etc/named.conf\r"
 expect -re $prompt
 
-# Перезапуск named для применения изменений
-send "systemctl restart named\r"
-expect -re $prompt
-
 # Создай папку с мастер зонами
 send "mkdir /var/named/master\r"
 expect -re $prompt
