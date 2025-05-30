@@ -1,0 +1,33 @@
+#!/usr/bin/expect -f
+
+# Настройка переменных
+set timeout 60
+set hostname "hq-cli.au-team.irpo"
+set prompt "#"
+
+# Запуск терминала
+spawn bash
+expect -re $prompt
+
+# Установка имени хоста
+send "hostnamectl set-hostname $hostname\r"
+expect -re $prompt
+
+# Удаление всех существующих подключений
+send "nmcli connection show | grep -v NAME | awk '{print \$1}' | xargs -I {} nmcli connection delete {}\r"
+expect -re $prompt
+
+# Создание и активация VLAN200
+send "nmcli connection add type vlan con-name vlan200 ifname ens18.200 dev ens18 id 200 ipv4.method auto ipv6.method disabled\r"
+expect -re $prompt
+send "nmcli connection up vlan200\r"
+expect -re $prompt
+
+# Установка Yandex
+send "dnf install yandex-browser-stable\r"
+expect -re $prompt
+
+# Завершение
+send "reboot\r"
+send "exit\r"
+expect eof
