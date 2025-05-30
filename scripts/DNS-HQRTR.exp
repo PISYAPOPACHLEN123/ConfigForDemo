@@ -89,6 +89,35 @@ expect -re $prompt
 send "systemctl restart named\r"
 expect -re $prompt
 
+# Создай папку с мастер зонами
+send "mkdir /var/named/master\r"
+expect -re $prompt
+
+# Создайте прямую DNS-зону
+# Создание файла /var/named/master/au-team.irpo
+send "cat > /var/named/master/au-team.irpo << 'EOF'\r"
+send "\$TTL 604800       ;\n"
+send "au-team.irpo.    IN      SOA     hq-srv.au-team.irpo. root.au-team.irpo. (\n"
+send "                1         ; Serial\n"
+send "                600       ; Refresh\n"
+send "                3600      ; Retry\n"
+send "                1w        ; Expire\n"
+send "                360       ; Minimum TTL\n"
+send "                )\n"
+send "        IN      NS      hq-srv.au-team.irpo.\n"
+send "hq-rtr.au-team.irpo.    IN      A       192.168.2.1\n"
+send "hq-rtr.au-team.irpo.    IN      A       192.168.2.1\n"
+send "hq-rtr.au-team.irpo.    IN      A       192.168.2.1\n"
+send "br-rtr.au-team.irpo.    IN      A       172.16.5.2\n"
+send "br-rtr.au-team.irpo.    IN      A       192.168.3.1\n"
+send "hq-srv.au-team.irpo.    IN      A       192.168.1.2\n"
+send "hq-cli.au-team.irpo.    IN      A       192.168.2.2\n"
+send "br-srv.au-team.irpo.    IN      A       192.168.2.1\n"
+send "hq-rtr.au-team.irpo.    IN      CNAME   moodle.au-team.irpo.\n"
+send "hq-rtr.au-team.irpo.    IN      CNAME   wiki.au-team.irpo.\n"
+send "EOF\r"
+expect -re $prompt
+
 # Завершение
 send "exit\r"
 expect eof
