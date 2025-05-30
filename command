@@ -19,6 +19,13 @@ ili
 expect *imya_skripta.exp*
 
 
+---kopirovanie failov iz mashini v mashinu
+scp -r ConfigForDemo/ user/*ip*:
+password (vrode P@ssw0rd)
+-na drugoi mashine, na kotoruu delaem kopirovanie
+cp /home/user/ConfigForDemo /root/ -r
+
+
 ---chatGPT (slabiy) v terminale:
 curl -sSL https://raw.githubusercontent.com/aandrew-me/tgpt/main/install | bash -s /usr/local/bin
 tgpt --provider phind "zdes pishem zapros v kovichkah"
@@ -35,6 +42,6 @@ apt-get install surfraw
 surfraw google *zapros*
 
 
---cartinki v terminale
+---cartinki v terminale
 dnf install catimg
 catimg *image.png*
