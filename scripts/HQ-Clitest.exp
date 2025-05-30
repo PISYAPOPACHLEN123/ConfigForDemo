@@ -1,7 +1,7 @@
 #!/usr/bin/expect -f
 
 # Настройка переменных
-set timeout 60
+set timeout 500
 set hostname "hq-cli.au-team.irpo"
 set prompt "#"
 
@@ -24,7 +24,7 @@ send "nmcli connection up vlan200\r"
 expect -re $prompt
 
 # Установка Yandex
-send "dnf install yandex-browser-stable\r"
+send "dnf install yandex-browser-stable -y\r"
 expect -re $prompt
 
 # Завершение
