@@ -1,1 +1,88 @@
+#!/usr/bin/expect -f
 
+# Настройка переменных
+set timeout 60
+set prompt "#"
+
+# Запуск терминала
+spawn bash
+expect -re $prompt
+
+send "lsblk\r"
+expect -re $prompt
+
+send "mdadm -E /dev/sd[b-d]\r"
+expect -re $prompt
+
+# Создание раздела на /dev/sdb
+send "fdisk /dev/sdb\r"
+expect "Command (m for help):"
+send "n\r"
+expect "Partition type:"
+send "p\r"
+expect "Partition number (1-4, default 1):"
+send "\r"
+expect "First sector.*:"
+send "\r"
+expect "Last sector, .* or .* sectors:"
+send "\r"
+expect "Command (m for help):"
+send "t\r"
+expect "Hex code (type L to list all codes):"
+send "fd\r"
+expect "Changed type of partition"
+send "w\r"
+expect -re $prompt
+
+spawn bash
+expect -re $prompt
+
+# Создание раздела на /dev/sdc
+send "fdisk /dev/sdc\r"
+expect "Command (m for help):"
+send "n\r"
+expect "Partition type:"
+send "p\r"
+expect "Partition number (1-4, default 1):"
+send "\r"
+expect "First sector.*:"
+send "\r"
+expect "Last sector, .* or .* sectors:"
+send "\r"
+expect "Command (m for help):"
+send "t\r"
+expect "Hex code (type L to list all codes):"
+send "fd\r"
+expect "Changed type of partition"
+send "w\r"
+expect -re $prompt
+
+spawn bash
+expect -re $prompt
+
+# Создание раздела на /dev/sdd
+send "fdisk /dev/sdd\r"
+expect "Command (m for help):"
+send "n\r"
+expect "Partition type:"
+send "p\r"
+expect "Partition number (1-4, default 1):"
+send "\r"
+expect "First sector.*:"
+send "\r"
+expect "Last sector, .* or .* sectors:"
+send "\r"
+expect "Command (m for help):"
+send "t\r"
+expect "Hex code (type L to list all codes):"
+send "fd\r"
+expect "Changed type of partition"
+send "w\r"
+expect -re $prompt
+
+spawn bash
+expect -re $prompt
+
+# Завершение
+send "exit\r"
+expect eof
