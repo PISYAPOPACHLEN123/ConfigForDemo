@@ -29,8 +29,8 @@ send "nmcli connection up vlan100\r"
 expect -re $prompt
 
 # Установка Вебмина и таймзона
-send "dnf install webmin -y\r"
-expect -re $prompt
+#send "dnf install webmin -y\r"
+#expect -re $prompt
 send "timedatectl set-timezone Europe/Moscow\r"
 expect -re $prompt
 
