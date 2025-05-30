@@ -88,10 +88,10 @@ proc create_partition {disk} {
             exit 1
         }
     }
-    # Ожидаем подтверждение изменения типа или следующее приглашение
+    # Ожидаем подтверждение или следующее приглашение, учитывая возможное сообщение об уже установленном типе
     expect {
-        -re ".*(Changed|Изменен).*type|.*:" {
-            send_user "Debug: Partition type changed or next prompt\n"
+        -re ".*(Changed|Изменен).*type|.*(already set|уже установлен).*|.*:" {
+            send_user "Debug: Partition type processed (changed or already set)\n"
             send "w\r"
         }
         timeout {
