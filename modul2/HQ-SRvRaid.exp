@@ -77,7 +77,7 @@ proc create_partition {disk} {
             exit 1
         }
     }
-    # Ожидаем приглашение для ввода hex-кода с более специфичным шаблоном
+    # Ожидаем приглашение для ввода hex-кода
     expect {
         -re ".*(Hex code|Шестнадцатеричный код).*:" {
             send_user "Debug: Found hex code prompt\n"
@@ -88,10 +88,10 @@ proc create_partition {disk} {
             exit 1
         }
     }
-    # Ожидаем подтверждение изменения типа
+    # Ожидаем подтверждение изменения типа или следующее приглашение
     expect {
-        -re ".*(Changed|Изменен).*type" {
-            send_user "Debug: Partition type changed\n"
+        -re ".*(Changed|Изменен).*type|.*:" {
+            send_user "Debug: Partition type changed or next prompt\n"
             send "w\r"
         }
         timeout {
