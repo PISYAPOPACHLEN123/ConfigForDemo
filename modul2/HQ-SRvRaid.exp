@@ -7,110 +7,44 @@ set timeout 120
 spawn bash
 expect -re "#"
 
-# Функция для обработки одного диска
-proc create_partition {disk} {
-    send "fdisk $disk\r"
-    # Ожидаем первое приглашение, игнорируя возможные предупреждения
-    expect {
-        -re ".*:" {
-            send_user "Debug: Found first prompt for $disk\n"
-            send "n\r"
-        }
-        timeout {
-            send_user "Debug: Timed out waiting for first prompt on $disk\n"
-            exit 1
-        }
-    }
-    # Ожидаем приглашение для выбора типа раздела
-    expect {
-        -re ".*(Partition type|Тип раздела).*" {
-            send_user "Debug: Found partition type prompt\n"
-            send "p\r"
-        }
-        timeout {
-            send_user "Debug: Timed out waiting for partition type prompt\n"
-            exit 1
-        }
-    }
-    # Ожидаем приглашение для номера раздела
-    expect {
-        -re ".*(Partition number|Номер раздела).*" {
-            send_user "Debug: Found partition number prompt\n"
-            send "\r"
-        }
-        timeout {
-            send_user "Debug: Timed out waiting for partition number prompt\n"
-            exit 1
-        }
-    }
-    # Ожидаем приглашение для первого сектора
-    expect {
-        -re ".*(First sector|Первый сектор).*" {
-            send_user "Debug: Found first sector prompt\n"
-            send "\r"
-        }
-        timeout {
-            send_user "Debug: Timed out waiting for first sector prompt\n"
-            exit 1
-        }
-    }
-    # Ожидаем приглашение для последнего сектора
-    expect {
-        -re ".*(Last sector|Последний сектор).*" {
-            send_user "Debug: Found last sector prompt\n"
-            send "\r"
-        }
-        timeout {
-            send_user "Debug: Timed out waiting for last sector prompt\n"
-            exit 1
-        }
-    }
-    # Ожидаем приглашение для следующей команды
-    expect {
-        -re ".*(Command|Команда).*" {
-            send_user "Debug: Found command prompt after sector selection\n"
-            send "t\r"
-        }
-        timeout {
-            send_user "Debug: Timed out waiting for command prompt after sectors\n"
-            exit 1
-        }
-    }
-    # Ожидаем приглашение для ввода hex-кода
-    expect {
-        -re ".*(Hex code|Шестнадцатеричный код).*:" {
-            send_user "Debug: Found hex code prompt\n"
-            send "fd\r"
-        }
-        timeout {
-            send_user "Debug: Timed out waiting for hex code prompt\n"
-            exit 1
-        }
-    }
-    # Ожидаем подтверждение или следующее приглашение
-    expect {
-        -re ".*(Changed|Изменен).*type|.*(already set|уже установлен).*|.*(Command|Команда).*" {
-            send_user "Debug: Partition type processed (changed or already set)\n"
-            send "w\r"
-        }
-        timeout {
-            send_user "Debug: Timed out waiting for type change confirmation\n"
-            exit 1
-        }
-    }
-    # Возвращаемся к приглашению shell
-    expect -re "#"
-    send_user "Debug: Wrote changes to $disk\n"
-}
+# Запуск fdisk для /dev/sdb
+send "fdisk /dev/sdb\r"
+expect -re ".*:"
 
-# Проверка и создание разделов на всех дисках
-foreach disk {"/dev/sdb" "/dev/sdc" "/dev/sdd"} {
-    send_user "Processing disk $disk...\n"
-    create_partition $disk
-}
+# Создание нового раздела
+send "n\r"
+expect -re ".*:"
+
+# Выбор типа раздела (primary)
+send "p\r"
+expect -re ".*:"
+
+# Выбор номера раздела (1)
+send "1\r"
+expect -re ".*:"
+
+# Установка первого сектора (по умолчанию)
+send "\r"
+expect -re ".*:"
+
+# Установка последнего сектора (по умолчанию)
+send "\r"
+expect -re ".*:"
+
+# Изменение типа раздела
+send "t\r"
+expect -re ".*:"
+
+# Установка hex-кода (fd для Linux LVM)
+send "fd\r"
+expect -re ".*:"
+
+# Запись изменений и выход
+send "w\r"
+expect -re "#"
 
 # Перечитывание таблицы разделов
-send "partprobe /dev/sdb /dev/sdc /dev/sdd\r"
+send "partprobe /dev/sdb\r"
 expect -re "#"
 
 # Завершение
