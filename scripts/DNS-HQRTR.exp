@@ -1,1 +1,17 @@
+#!/usr/bin/expect -f
 
+# Настройка переменных
+set timeout 60
+set prompt "#"
+
+# Запуск терминала
+spawn bash
+expect -re $prompt
+
+# Удаление всех существующих подключений
+send "dnf install bind -y\r"
+expect -re $prompt
+
+# Удаление всех существующих подключений
+send "systemctl enable named --now\r"
+expect -re $prompt
