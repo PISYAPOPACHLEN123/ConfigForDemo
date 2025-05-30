@@ -11,7 +11,13 @@ expect -re $prompt
 send "lsblk\r"
 expect -re $prompt
 
-send "mdadm -E /dev/sd[b-d]\r"
+send "mdadm -E /dev/sdb\r"
+expect -re $prompt
+
+send "mdadm -E /dev/sdс\r"
+expect -re $prompt
+
+send "mdadm -E /dev/sdd\r"
 expect -re $prompt
 
 # Создание раздела на /dev/sdb
