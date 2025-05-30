@@ -10,18 +10,6 @@ set password "P@\$\$w0rd"  ;# Экранируем символы $ для ко�
 spawn bash
 expect -re $prompt
 
-# Установка и запуск NetworkManager
-send "apt-get update\r"
-expect -re $prompt
-send "apt-get install -y NetworkManager-daemon\r"
-expect -re $prompt
-send "systemctl daemon-reload\r"
-expect -re $prompt
-send "systemctl enable NetworkManager\r"
-expect -re $prompt
-send "systemctl start NetworkManager\r"
-expect -re $prompt
-
 # Установка имени хоста
 send "hostnamectl set-hostname $hostname\r"
 expect -re $prompt
