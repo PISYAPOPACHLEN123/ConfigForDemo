@@ -18,6 +18,10 @@ set lines {
 spawn bash
 expect -re $prompt
 
+# Установка имени хоста
+send "hostnamectl set-hostname $hostname\r"
+expect -re $prompt
+
 # Удаление всех существующих подключений
 send "nmcli connection show | grep -v NAME | awk '{print \$1}' | xargs -I {} nmcli connection delete {}\r"
 expect -re $prompt
