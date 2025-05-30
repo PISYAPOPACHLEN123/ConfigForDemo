@@ -144,7 +144,54 @@ expect -re $prompt
 send "chmod 0640 /var/named/master\r"
 expect -re $prompt
 
+# Создание файла /var/named/master/4.16.172.zone
+send "cat > /var/named/master/4.16.172.zone << 'EOF'\r"
+send "\$TTL 3600       ;\n"
+send "@     IN      SOA     hq-srv.au-team.irpo. root.example.org (\n"
+send "      20060204        ; Serial\n"
+send "      3600            ; Refresh\n"
+send "      900             ; Retry\n"
+send "      3600000         ; Expire\n"
+send "      3600            ; Minimum\n"
+send "      )\n"
+send "@     IN      NS      hq-srv.au-team.irpo.\n"
+send "2    IN      PTR     hq-rtr.au-team.irpo.\n"
+send "EOF\r"
+expect -re $prompt
 
+# Создание файла /var/named/master/1.168.192.zone
+send "cat > /var/named/master/1.168.192.zone << 'EOF'\r"
+send "\$TTL 3600       ;\n"
+send "@     IN      SOA     hq-srv.au-team.irpo. root.au-team.irpo (\n"
+send "      20060204        ; Serial\n"
+send "      3600            ; Refresh\n"
+send "      900             ; Retry\n"
+send "      3600000         ; Expire\n"
+send "      3600            ; Minimum\n"
+send "      )\n"
+send "@     IN      NS      hq-srv.au-team.irpo.\n"
+send "1     IN      NS      hq-rtr.au-team.irpo.\n"
+send "2     IN      NS      hq-srv.au-team.irpo.\n"
+send "EOF\r"
+expect -re $prompt
+
+# Создание файла /var/named/master/2.168.192.zone
+send "cat > /var/named/master/2.168.192.zone << 'EOF'\r"
+send "\$TTL 3600       ;\n"
+send "@     IN      SOA     hq-srv.au-team.irpo. root.au-team.irpo (\n"
+send "      20060204        ; Serial\n"
+send "      3600            ; Refresh\n"
+send "      900             ; Retry\n"
+send "      3600000         ; Expire\n"
+send "      3600            ; Minimum\n"
+send "      )\n"
+send "@     IN      NS      hq-srv.au-team.irpo.\n"
+send "2     IN      PTR     hq-cli.au-team.irpo.\n"
+send "EOF\r"
+expect -re $prompt
+
+send "systemctl restart named\r"
+expect -re $prompt
 
 # Завершение
 send "exit\r"
