@@ -1,0 +1,75 @@
+#!/usr/bin/expect -f
+
+# Настройка переменных
+set timeout 60
+set hostname "hq-srv.au-team.irpo"
+set prompt "#"
+set password "P@ssw0rd"  ;# Явно задаём пароль для пользователя net_admin
+
+# Запуск терминала
+spawn bash
+expect -re $prompt
+
+# Удаление всех существующих подключений
+send "nmcli connection show | grep -v NAME | awk '{print \$1}' | xargs -I {} nmcli connection delete {}\r"
+expect -re $prompt
+
+# Создание и активация VLAN100
+send "nmcli connection add type vlan con-name vlan100 ifname ens18.100 dev ens18 id 100 ipv4.method manual ipv4.addresses 192.168.1.2/26 ipv4.gateway 192.168.1.1 ipv4.dns 8.8.8.8 ipv6.method disabled\r"
+expect -re $prompt
+send "nmcli connection up vlan100\r"
+expect -re $prompt
+
+# Установка Вебмина и таймзона
+send "dnf install webmin -y\r"
+expect -re $prompt
+send "timedatectl set-timezone Europe/Moscow\r"
+expect -re $prompt
+
+# Создание пользователя sshuser
+send "useradd sshuser -u 1010\r"
+expect -re $prompt
+spawn passwd sshuser
+set timeout 120
+expect {
+    -re "Enter new.*password:" {
+        send "$password\r"
+    }
+    timeout {
+        send_user "Debug: Timed out waiting for password prompt\n"
+        exit 1
+    }
+}
+expect {
+    -re "Re-type new.*password:" {
+        send "$password\r"
+    }
+    timeout {
+        send_user "Debug: Timed out waiting for retype password prompt\n"
+        exit 1
+    }
+}
+expect -re $prompt
+
+spawn bash
+expect -re $prompt
+
+# Добавление пользователя в группы
+send "usermod -aG wheel sshuser\r"
+expect -re $prompt
+send "usermod -aG root sshuser\r"
+expect -re $prompt
+
+# Занимаемся сетенфорсом
+send "setenforce 0\r"
+expect -re $prompt
+
+# Изменение /etc/selinux/config
+send "sed -i 's/^enforcing.*/permissive/' /etc/selinux/config\r"
+expect -re $prompt
+
+send "sysctl -p /etc/selinux/config\r"
+expect -re $prompt
+
+spawn bash
+expect -re $prompt
