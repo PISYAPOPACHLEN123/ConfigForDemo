@@ -40,7 +40,7 @@ expect -re $prompt
 spawn passwd sshuser
 set timeout 120
 expect {
-    -re "Enter new.*password:" {
+    -re "Новый пароль.*password:" {
         send "$password\r"
     }
     timeout {
