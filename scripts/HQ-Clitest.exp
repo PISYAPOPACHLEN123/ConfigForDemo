@@ -1,7 +1,7 @@
 #!/usr/bin/expect -f
 
 # Настройка переменных
-set timeout 500
+set timeout 60
 set hostname "hq-cli.au-team.irpo"
 set prompt "#"
 
