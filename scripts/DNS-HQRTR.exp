@@ -55,9 +55,8 @@ expect -re $prompt
 send "systemctl enable named --now\r"
 expect -re $prompt
 
-# nano /etc/named.conf
-# Изменение /etc/net/sysctl.conf
-send "sed -i 's/^options.*/$options/' /etc/net/sysctl.conf\r"
+# Изменение /etc/named.conf
+send "sed -i 's/^options.*/$options/' /etc/named.conf\r"
 expect -re $prompt
 
 # Завершение
