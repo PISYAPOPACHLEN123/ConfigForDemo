@@ -1,119 +1,116 @@
 #!/usr/bin/expect -f
 
 # Настройка переменных
-set timeout 60
+set timeout 120
 set prompt "#"
 
 # Запуск терминала
 spawn bash
 expect -re $prompt
 
-send "lsblk\r"
-expect -re $prompt
+# Функция для обработки одного диска
+proc create_partition {disk} {
+    send "fdisk $disk\r"
+    # Ожидаем первое приглашение, игнорируя возможные предупреждения
+    expect {
+        -re ".*:" {
+            send_user "Debug: Found first prompt for $disk\n"
+            send "n\r"
+        }
+        timeout {
+            send_user "Debug: Timed out waiting for first prompt on $disk\n"
+            exit 1
+        }
+    }
+    # Ожидаем приглашение для выбора типа раздела
+    expect {
+        -re ".*:" {
+            send_user "Debug: Found partition type prompt\n"
+            send "p\r"
+        }
+        timeout {
+            send_user "Debug: Timed out waiting for partition type prompt\n"
+            exit 1
+        }
+    }
+    # Ожидаем приглашение для номера раздела
+    expect {
+        -re ".*:" {
+            send_user "Debug: Found partition number prompt\n"
+            send "\r"
+        }
+        timeout {
+            send_user "Debug: Timed out waiting for partition number prompt\n"
+            exit 1
+        }
+    }
+    # Ожидаем приглашение для первого сектора
+    expect {
+        -re ".*:" {
+            send_user "Debug: Found first sector prompt\n"
+            send "\r"
+        }
+        timeout {
+            send_user "Debug: Timed out waiting for first sector prompt\n"
+            exit 1
+        }
+    }
+    # Ожидаем приглашение для последнего сектора
+    expect {
+        -re ".*:" {
+            send_user "Debug: Found last sector prompt\n"
+            send "\r"
+        }
+        timeout {
+            send_user "Debug: Timed out waiting for last sector prompt\n"
+            exit 1
+        }
+    }
+    # Ожидаем приглашение для следующей команды
+    expect {
+        -re ".*:" {
+            send_user "Debug: Found command prompt after sector selection\n"
+            send "t\r"
+        }
+        timeout {
+            send_user "Debug: Timed out waiting for command prompt after sectors\n"
+            exit 1
+        }
+    }
+    # Ожидаем приглашение для ввода hex-кода
+    expect {
+        -re ".*:" {
+            send_user "Debug: Found hex code prompt\n"
+            send "fd\r"
+        }
+        timeout {
+            send_user "Debug: Timed out waiting for hex code prompt\n"
+            exit 1
+        }
+    }
+    # Ожидаем подтверждение изменения типа
+    expect {
+        -re ".*" {
+            send_user "Debug: Partition type changed\n"
+            send "w\r"
+        }
+        timeout {
+            send_user "Debug: Timed out waiting for type change confirmation\n"
+            exit 1
+        }
+    }
+    # Возвращаемся к приглашению shell
+    expect -re $prompt
+    send_user "Debug: Wrote changes to $disk\n"
+}
 
-send "mdadm -E /dev/sdb\r"
-expect -re $prompt
+# Создание разделов на всех дисках
+create_partition "/dev/sdb"
+create_partition "/dev/sdc"
+create_partition "/dev/sdd"
 
-send "mdadm -E /dev/sdc\r"
-expect -re $prompt
-
-send "mdadm -E /dev/sdd\r"
-expect -re $prompt
-
-# Создание раздела на /dev/sdb
-send "fdisk /dev/sdb\r"
-expect "Команда (m для справки):"
-send_user "Debug: Found 'Команда (m для справки):' prompt for /dev/sdb\n"
-send "n\r"
-expect "Тип раздела:"
-send_user "Debug: Found 'Тип раздела:' prompt\n"
-send "p\r"
-expect "Номер раздела \(1-4, по умолчанию 1\):"
-send_user "Debug: Found 'Номер раздела' prompt\n"
-send "\r"
-expect "Первый сектор.*:"
-send_user "Debug: Found 'Первый сектор' prompt\n"
-send "\r"
-expect "Последний сектор, .* или .* секторов:"
-send_user "Debug: Found 'Последний сектор' prompt\n"
-send "\r"
-expect "Команда (m для справки):"
-send_user "Debug: Found second 'Команда (m для справки):' prompt\n"
-send "t\r"
-expect "Шестнадцатеричный код \(тип L для списка всех кодов\):"
-send_user "Debug: Found 'Шестнадцатеричный код' prompt\n"
-send "fd\r"
-expect "Изменен тип раздела"
-send_user "Debug: Changed partition type to fd\n"
-send "w\r"
-expect -re $prompt
-send_user "Debug: Wrote changes to /dev/sdb\n"
-
-spawn bash
-expect -re $prompt
-
-# Создание раздела на /dev/sdc
-send "fdisk /dev/sdc\r"
-expect "Команда (m для справки):"
-send_user "Debug: Found 'Команда (m для справки):' prompt for /dev/sdc\n"
-send "n\r"
-expect "Тип раздела:"
-send_user "Debug: Found 'Тип раздела:' prompt\n"
-send "p\r"
-expect "Номер раздела \(1-4, по умолчанию 1\):"
-send_user "Debug: Found 'Номер раздела' prompt\n"
-send "\r"
-expect "Первый сектор.*:"
-send_user "Debug: Found 'Первый сектор' prompt\n"
-send "\r"
-expect "Последний сектор, .* или .* секторов:"
-send_user "Debug: Found 'Последний сектор' prompt\n"
-send "\r"
-expect "Команда (m для справки):"
-send_user "Debug: Found second 'Команда (m для справки):' prompt\n"
-send "t\r"
-expect "Шестнадцатеричный код \(тип L для списка всех кодов\):"
-send_user "Debug: Found 'Шестнадцатеричный код' prompt\n"
-send "fd\r"
-expect "Изменен тип раздела"
-send_user "Debug: Changed partition type to fd\n"
-send "w\r"
-expect -re $prompt
-send_user "Debug: Wrote changes to /dev/sdc\n"
-
-spawn bash
-expect -re $prompt
-
-# Создание раздела на /dev/sdd
-send "fdisk /dev/sdd\r"
-expect "Команда (m для справки):"
-send_user "Debug: Found 'Команда (m для справки):' prompt for /dev/sdd\n"
-send "n\r"
-expect "Тип раздела:"
-send_user "Debug: Found 'Тип раздела:' prompt\n"
-send "p\r"
-expect "Номер раздела \(1-4, по умолчанию 1\):"
-send_user "Debug: Found 'Номер раздела' prompt\n"
-send "\r"
-expect "Первый сектор.*:"
-send_user "Debug: Found 'Первый сектор' prompt\n"
-send "\r"
-expect "Последний сектор, .* или .* секторов:"
-send_user "Debug: Found 'Последний сектор' prompt\n"
-send "\r"
-expect "Команда (m для справки):"
-send_user "Debug: Found second 'Команда (m для справки):' prompt\n"
-send "t\r"
-expect "Шестнадцатеричный код \(тип L для списка всех кодов\):"
-send_user "Debug: Found 'Шестнадцатеричный код' prompt\n"
-send "fd\r"
-expect "Изменен тип раздела"
-send_user "Debug: Changed partition type to fd\n"
-send "w\r"
-expect -re $prompt
-send_user "Debug: Wrote changes to /dev/sdd\n"
-
-spawn bash
+# Перечитывание таблицы разделов
+send "partprobe /dev/sdb /dev/sdc /dev/sdd\r"
 expect -re $prompt
 
 # Завершение
