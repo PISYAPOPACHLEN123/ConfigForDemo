@@ -6,6 +6,14 @@ set hostname "hq-srv.au-team.irpo"
 set prompt "#"
 set password "P@ssw0rd"  ;# Явно задаём пароль для пользователя net_admin
 
+set config [exec cat /etc/ssh/sshd_config]
+set lines {
+    "Port 2024"
+    "MaxAuthTries 2"
+    "AllowUsers sshuser"
+    "Banner /etc/ssh/banner"
+}
+
 # Запуск терминала
 spawn bash
 expect -re $prompt
@@ -65,7 +73,7 @@ send "setenforce 0\r"
 expect -re $prompt
 
 # Изменение /etc/selinux/config
-send "sed -i 's/^enforcing.*/permissive/' /etc/selinux/config\r"
+send "sed -i 's/^SELINUX=.*/SELINUX=permissive/' /etc/selinux/config\r"
 expect -re $prompt
 
 send "sysctl -p /etc/selinux/config\r"
@@ -73,3 +81,33 @@ expect -re $prompt
 
 spawn bash
 expect -re $prompt
+
+foreach line $lines {
+    if {![regexp $line $config]} {
+        exec bash -c "echo '$line' >> /etc/ssh/sshd_config"
+    }
+}
+
+spawn bash
+expect -re $prompt
+
+# Настройка /etc/ssh/banner
+send "echo 'Authorized access only' > /etc/ssh/banner\r"
+expect -re $prompt
+
+spawn bash
+expect -re $prompt
+
+# Настройка /etc/sudoers
+send "echo 'sshuser  ALL=(ALL)    NOPASSWD:  ALL' >> /etc/sudoers\r"
+expect -re $prompt
+
+spawn bash
+expect -re $prompt
+
+send "systemctl enable sshd --now\r"
+expect -re $prompt
+
+# Перезагрузка системы
+send "reboot\r"
+expect eof
