@@ -65,7 +65,10 @@ expect -re "#"
 send "partprobe /dev/sdb /dev/sdc /dev/sdd\r"
 expect -re "#"
 
-send "mdadm --create /dev/md0 --level=5 --raid-devices=3 /dev/sdb1 /dev/sdc1 /dev/sdd1\r"
+send "fdisk -l /dev/sdb1 /dev/sdc1 /dev/sdd1\r"
+expect -re "#"
+
+send "yes | mdadm --create /dev/md0 --level=5 --raid-devices=3 /dev/sdb1 /dev/sdc1 /dev/sdd1\r"
 expect -re "#"
 
 send "cat /proc/mdstat\r"
