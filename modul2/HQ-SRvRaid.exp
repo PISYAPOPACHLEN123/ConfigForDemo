@@ -2,11 +2,10 @@
 
 # Настройка переменных
 set timeout 120
-set prompt "#"
 
 # Запуск терминала
 spawn bash
-expect -re $prompt
+expect -re "#"
 
 # Функция для обработки одного диска
 proc create_partition {disk} {
@@ -24,7 +23,7 @@ proc create_partition {disk} {
     }
     # Ожидаем приглашение для выбора типа раздела
     expect {
-        -re ".*:" {
+        -re ".*(Partition type|Тип раздела).*" {
             send_user "Debug: Found partition type prompt\n"
             send "p\r"
         }
@@ -35,7 +34,7 @@ proc create_partition {disk} {
     }
     # Ожидаем приглашение для номера раздела
     expect {
-        -re ".*:" {
+        -re ".*(Partition number|Номер раздела).*" {
             send_user "Debug: Found partition number prompt\n"
             send "\r"
         }
@@ -46,7 +45,7 @@ proc create_partition {disk} {
     }
     # Ожидаем приглашение для первого сектора
     expect {
-        -re ".*:" {
+        -re ".*(First sector|Первый сектор).*" {
             send_user "Debug: Found first sector prompt\n"
             send "\r"
         }
@@ -57,7 +56,7 @@ proc create_partition {disk} {
     }
     # Ожидаем приглашение для последнего сектора
     expect {
-        -re ".*:" {
+        -re ".*(Last sector|Последний сектор).*" {
             send_user "Debug: Found last sector prompt\n"
             send "\r"
         }
@@ -68,7 +67,7 @@ proc create_partition {disk} {
     }
     # Ожидаем приглашение для следующей команды
     expect {
-        -re ".*:" {
+        -re ".*(Command|Команда).*" {
             send_user "Debug: Found command prompt after sector selection\n"
             send "t\r"
         }
@@ -88,9 +87,9 @@ proc create_partition {disk} {
             exit 1
         }
     }
-    # Ожидаем подтверждение или следующее приглашение, учитывая возможное сообщение об уже установленном типе
+    # Ожидаем подтверждение или следующее приглашение
     expect {
-        -re ".*(Changed|Изменен).*type|.*(already set|уже установлен).*|.*:" {
+        -re ".*(Changed|Изменен).*type|.*(already set|уже установлен).*|.*(Command|Команда).*" {
             send_user "Debug: Partition type processed (changed or already set)\n"
             send "w\r"
         }
@@ -100,7 +99,7 @@ proc create_partition {disk} {
         }
     }
     # Возвращаемся к приглашению shell
-    expect -re $prompt
+    expect -re "#"
     send_user "Debug: Wrote changes to $disk\n"
 }
 
@@ -111,7 +110,7 @@ create_partition "/dev/sdd"
 
 # Перечитывание таблицы разделов
 send "partprobe /dev/sdb /dev/sdc /dev/sdd\r"
-expect -re $prompt
+expect -re "#"
 
 # Завершение
 send "exit\r"
