@@ -186,6 +186,12 @@ send "2     IN      PTR     hq-cli.au-team.irpo.\n"
 send "EOF\r"
 expect -re $prompt
 
+send "chown named:named -R /var/named\r"
+expect -re $prompt
+
+send "chmod 777 -R /var/named\r"
+expect -re $prompt
+
 send "systemctl restart named\r"
 expect -re $prompt
 
