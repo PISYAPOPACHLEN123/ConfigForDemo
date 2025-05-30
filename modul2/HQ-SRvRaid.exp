@@ -14,7 +14,7 @@ expect -re $prompt
 send "mdadm -E /dev/sdb\r"
 expect -re $prompt
 
-send "mdadm -E /dev/sdс\r"
+send "mdadm -E /dev/sdc\r"
 expect -re $prompt
 
 send "mdadm -E /dev/sdd\r"
