@@ -40,16 +40,15 @@ expect -re $prompt
 spawn passwd sshuser
 set timeout 120
 expect {
-    -re "Новый пароль.*password:" {
+    -re "Новый пароль:" {
         send "$password\r"
     }
     timeout {
-        send_user "Debug: Timed out waiting for password prompt\n"
         exit 1
     }
 }
 expect {
-    -re "Re-type new.*password:" {
+    -re "Повтор нового пароля:" {
         send "$password\r"
     }
     timeout {
