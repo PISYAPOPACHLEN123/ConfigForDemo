@@ -78,6 +78,26 @@ send "};\n"
 send "\n"
 send "include \"/etc/named.rfc1912.zones\";\n"
 send "include \"/etc/named.root.key\";\n"
+send "\n"
+send "zone \"au-team.irpo\" {\n"
+send "    type master;\n"
+send "    file \"master/au-team.irpo\";\n"
+send "};\n"
+send "\n"
+send "zone \"4.16.172.in-addr.arpa\" {\n"
+send "    type master;\n"
+send "    file \"master/0.16.172.zone\";\n"
+send "};\n"
+send "\n"
+send "zone \"1.168.192.in-addr.arpa\" {\n"
+send "    type master;\n"
+send "    file \"master/1.168.192.zone\";\n"
+send "};\n"
+send "\n"
+send "zone \"2.168.192.in-addr.arpa\" {\n"
+send "    type master;\n"
+send "    file \"master/2.168.192.zone\";\n"
+send "};\n"
 send "EOF\r"
 expect -re $prompt
 
@@ -117,6 +137,14 @@ send "hq-rtr.au-team.irpo.    IN      CNAME   moodle.au-team.irpo.\n"
 send "hq-rtr.au-team.irpo.    IN      CNAME   wiki.au-team.irpo.\n"
 send "EOF\r"
 expect -re $prompt
+
+# Назначте владельца и права
+send "chown -R root:named /var/named/master\r"
+expect -re $prompt
+send "chmod 0640 /var/named/master\r"
+expect -re $prompt
+
+
 
 # Завершение
 send "exit\r"
