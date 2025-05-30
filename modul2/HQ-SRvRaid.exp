@@ -103,10 +103,11 @@ proc create_partition {disk} {
     send_user "Debug: Wrote changes to $disk\n"
 }
 
-# Создание разделов на всех дисках
-create_partition "/dev/sdb"
-create_partition "/dev/sdc"
-create_partition "/dev/sdd"
+# Проверка и создание разделов на всех дисках
+foreach disk {"/dev/sdb" "/dev/sdc" "/dev/sdd"} {
+    send_user "Processing disk $disk...\n"
+    create_partition $disk
+}
 
 # Перечитывание таблицы разделов
 send "partprobe /dev/sdb /dev/sdc /dev/sdd\r"
