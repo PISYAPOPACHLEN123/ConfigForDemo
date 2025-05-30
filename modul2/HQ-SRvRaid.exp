@@ -1,52 +1,69 @@
 #!/usr/bin/expect -f
 
-# Настройка переменных
 set timeout 120
 
-# Запуск терминала
 spawn bash
 expect -re "#"
 
-# Запуск fdisk для /dev/sdb
 send "fdisk /dev/sdb\r"
 expect -re ".*:"
-
-# Создание нового раздела
 send "n\r"
 expect -re ".*:"
-
-# Выбор типа раздела (primary)
 send "p\r"
 expect -re ".*:"
-
-# Выбор номера раздела (1)
 send "1\r"
 expect -re ".*:"
-
-# Установка первого сектора (по умолчанию)
 send "\r"
 expect -re ".*:"
-
-# Установка последнего сектора (по умолчанию)
 send "\r"
 expect -re ".*:"
-
-# Изменение типа раздела
 send "t\r"
 expect -re ".*:"
-
-# Установка hex-кода (fd для Linux LVM)
 send "fd\r"
 expect -re ".*:"
-
-# Запись изменений и выход
 send "w\r"
 expect -re "#"
 
-# Перечитывание таблицы разделов
-send "partprobe /dev/sdb\r"
+send "fdisk /dev/sdc\r"
+expect -re ".*:"
+send "n\r"
+expect -re ".*:"
+send "p\r"
+expect -re ".*:"
+send "1\r"
+expect -re ".*:"
+send "\r"
+expect -re ".*:"
+send "\r"
+expect -re ".*:"
+send "t\r"
+expect -re ".*:"
+send "fd\r"
+expect -re ".*:"
+send "w\r"
 expect -re "#"
 
-# Завершение
+send "fdisk /dev/sdd\r"
+expect -re ".*:"
+send "n\r"
+expect -re ".*:"
+send "p\r"
+expect -re ".*:"
+send "1\r"
+expect -re ".*:"
+send "\r"
+expect -re ".*:"
+send "\r"
+expect -re ".*:"
+send "t\r"
+expect -re ".*:"
+send "fd\r"
+expect -re ".*:"
+send "w\r"
+expect -re "#"
+
+send "partprobe /dev/sdb /dev/sdc /dev/sdd\r"
+expect -re "#"
+
 send "exit\r"
 expect eof
