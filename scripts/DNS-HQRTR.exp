@@ -129,8 +129,8 @@ send "br-rtr.au-team.irpo.    IN      A       192.168.3.1\n"
 send "hq-srv.au-team.irpo.    IN      A       192.168.1.2\n"
 send "hq-cli.au-team.irpo.    IN      A       192.168.2.2\n"
 send "br-srv.au-team.irpo.    IN      A       192.168.2.1\n"
-send "hq-rtr.au-team.irpo.    IN      CNAME   moodle.au-team.irpo.\n"
-send "hq-rtr.au-team.irpo.    IN      CNAME   wiki.au-team.irpo.\n"
+send "moodle.au-team.irpo.    IN      CNAME   hq-rtr.au-team.irpo.\n"
+send "wiki.au-team.irpo.    IN      CNAME   hq-rtr.au-team.irpo.\n"
 send "EOF\r"
 expect -re $prompt
 
