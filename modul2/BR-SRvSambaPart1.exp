@@ -1,0 +1,36 @@
+#!/usr/bin/expect -f
+
+# Настройка переменных
+set timeout 500
+set prompt "#"
+
+# Запуск терминала
+spawn bash
+expect -re $prompt
+
+# Установка самба
+send "dnf install samba *krb5* bind\r"
+expect -re $prompt
+
+set timeout 60
+
+# Установка самба
+send "setenforce 0\r"
+expect -re $prompt
+
+# Изменение /etc/selinux/config
+send "sed -i 's/^SELINUX=.*/SELINUX=permissive/' /etc/selinux/config\r"
+expect -re $prompt
+
+send "echo -e '[connection]\nid=ens18\nuuid=a58a9970-625b-4bd1-b3f6-80534d2d5981\ntype=ethernet\ninterface-name=ens18\n\n[ethernet]\n\n[ipv4]\naddress1=192.168.3.2/27,192.168.3.1\ndns=192.168.3.2;\nmethod=manual\nignore-auto-dns=true\ndns-search=au-team.irpo;\n\n[ipv6]\naddr-gen-mode=default\nmethod=disabled\n\n[proxy]' > /etc/NetworkManager/system-connections/ens18.nmconnection\r"
+expect -re $prompt
+
+send "chmod 600 /etc/NetworkManager/system-connections/ens18.nmconnection\r"
+expect -re $prompt
+
+send "systemctl restart NetworkManager\r"
+expect -re $prompt
+
+# Перезагрузка системы
+send "reboot\r"
+expect eof
