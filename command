@@ -17,7 +17,7 @@ expect *imya_skripta.exp*
 
 
 ---kopirovanie failov iz mashini v mashinu
-scp -r ConfigForDemo/ user/*ip*:
+scp -r ConfigForDemo/ user@*ip*:
 password (vrode P@ssw0rd)
 -na drugoi mashine, na kotoruu delaem kopirovanie
 cp /home/user/ConfigForDemo /root/ -r
