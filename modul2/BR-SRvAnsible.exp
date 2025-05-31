@@ -16,7 +16,7 @@ send "nano /etc/ansible/hosts\r"
 expect -re ".*"
 
 # Эмуляция ввода текста в nano
-send "[test]\r"
+send "\[test\]\r"
 send "172.16.5.2\r"
 send "172.16.1.2\r"
 send "172.16.4.2\r"
