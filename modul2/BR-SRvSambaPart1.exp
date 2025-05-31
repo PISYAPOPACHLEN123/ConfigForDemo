@@ -10,7 +10,7 @@ spawn bash
 expect -re $prompt
 
 # Установка самба
-send "dnf install samba *krb5* bind -y\r"
+send "dnf install samba* krb5* bind -y\r"
 expect -re $prompt
 
 set timeout 60
