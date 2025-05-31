@@ -64,3 +64,7 @@ send "samba_dnsupdate --verbose –all-names\r"
 expect -re "#"
 send "kinit administrator@AU-TEAM.IRPO\r"
 expect -re "#"
+
+# Перезагрузка системы
+send "exit\r"
+expect eof
