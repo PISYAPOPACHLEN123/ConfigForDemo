@@ -245,7 +245,7 @@ expect -re "#"
 send "echo 'include \"/var/lib/samba/bind-dns/named.conf\";' >> /etc/named.conf\r"
 expect -re "#"
 
-send "echo 'samba-tool domain provision --use-rfc2307 --interactive\r"
+send "samba-tool domain provision --use-rfc2307 --interactive\r"
 expect -re "#"
 
 # Перезагрузка системы
