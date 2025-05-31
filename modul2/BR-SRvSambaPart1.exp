@@ -62,5 +62,5 @@ send "systemctl restart NetworkManager\r"
 expect -re $prompt
 
 # Перезагрузка системы
-send "reboot\r"
+send "exit\r"
 expect eof
