@@ -9,7 +9,7 @@ spawn bash
 expect -re $prompt
 
 # Установка имени хоста
-send "dnf install ansible\r"
+send "dnf install ansible -y\r"
 expect -re $prompt
 
 send "nano /etc/ansible/hosts\r"
