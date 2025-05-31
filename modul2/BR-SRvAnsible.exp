@@ -1,42 +1,20 @@
 #!/usr/bin/expect -f
 
-# Настройка переменных
 set timeout 60
 set prompt "#"
 
-# Запуск терминала
 spawn bash
 expect -re $prompt
 
-# Установка имени хоста
 send "dnf install ansible -y\r"
 expect -re $prompt
 
-send "nano /etc/ansible/hosts\r"
-expect -re ".*"
+send "echo -e '\n\[test\]\n172.16.5.2\n172.16.1.2\n172.16.4.2\n172.16.1.1\n192.168.2.2\n192.168.1.2' | tee -a /etc/ansible/hosts\r"
+expect -re $prompt
 
-# Эмуляция ввода текста в nano
-send "\[test\]\r"
-send "172.16.5.2\r"
-send "172.16.1.2\r"
-send "172.16.4.2\r"
-send "172.16.1.1\r"
-send "192.168.2.2\r"
-send "192.168.1.2\r"
-
-# Выход из nano (Ctrl+X, затем Y, затем Enter)
-send "\x18"  ;# Ctrl+X
-expect -re "Save modified"
-send "y\r"
-expect -re "File Name"
-send "\r"
-expect -re "#"
-
-# Запуск терминала
 spawn bash
 expect -re $prompt
 
-# Ввод
 send "ssh-keygen -C \"\$(whoami)@\$(hostname)-\$(date -I)\"\r"
 expect -re $prompt
 send "ssh-copy-id root@172.16.5.2\r"
