@@ -1,7 +1,7 @@
 #!/usr/bin/expect -f
 
 # Настройка переменных
-set timeout 500
+set timeout 5000
 set prompt "#"
 
 # Запуск терминала
