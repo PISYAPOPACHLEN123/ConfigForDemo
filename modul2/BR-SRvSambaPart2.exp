@@ -59,7 +59,7 @@ expect -re "#"
 
 send "systemctl enable samba named --now\r"
 expect -re "#"
-send "samba_dnsupdate --verbose –all-names\r"
+send "samba_dnsupdate --verbose --all-names\r"
 expect -re "#"
 send "kinit administrator@AU-TEAM.IRPO\r"
 expect -re "Password for administrator@AU-TEAM.IRPO:"
