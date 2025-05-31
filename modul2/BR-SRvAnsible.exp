@@ -20,6 +20,11 @@ expect -re "Enter file in which to save the key"
 send "\r"
 expect -re "Enter passphrase"
 send "\r"
+expect -re "Enter same passphrase"
+send "\r"
+expect -re $prompt
+
+spawn bash
 expect -re $prompt
 
 send "ssh-copy-id root@172.16.5.2\r"
