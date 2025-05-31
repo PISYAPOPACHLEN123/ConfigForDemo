@@ -9,7 +9,7 @@ expect -re $prompt
 send "dnf install ansible -y\r"
 expect -re $prompt
 
-send "echo -e '\n[test]\n172.16.5.2\n172.16.1.2\n172.16.4.2\n172.16.1.1\n192.168.2.2\n192.168.1.2' | tee -a /etc/ansible/hosts\r"
+send "echo -e '\n\[test\]\n172.16.5.2\n172.16.1.2\n172.16.4.2\n172.16.1.1\n192.168.2.2\n192.168.1.2' | tee -a /etc/ansible/hosts\r"
 expect -re $prompt
 
 spawn bash
