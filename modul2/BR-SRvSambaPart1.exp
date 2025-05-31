@@ -3,6 +3,7 @@
 # Настройка переменных
 set timeout 5000
 set prompt "#"
+set adapter "ens18"
 
 # Запуск терминала
 spawn bash
@@ -26,10 +27,10 @@ expect -re $prompt
 send "nmcli connection show | grep -v NAME | awk '{print \$1}' | xargs -I {} nmcli connection delete {}\r"
 expect -re $prompt
 
-# Создание и активация подключения для ens18
-send "nmcli connection add type ethernet con-name ens18 ifname ens18 ipv4.method manual ipv4.addresses 192.168.3.2/27 ipv4.gateway 192.168.3.1 ipv4.dns 192.168.3.2 ipv4.dns-search au-team.irpo ipv4.ignore-auto-dns true ipv6.addr-gen-mode default ipv6.method disabled connection.uuid a58a9970-625b-4bd1-b3f6-80534d2d5981\r"
+# Создание и активация подключения для $adapter
+send "nmcli connection add type ethernet con-name $adapter ifname $adapter ipv4.method manual ipv4.addresses 192.168.3.2/27 ipv4.gateway 192.168.3.1 ipv4.dns 192.168.3.2 ipv4.dns-search au-team.irpo ipv4.ignore-auto-dns true ipv6.addr-gen-mode default ipv6.method disabled connection.uuid a58a9970-625b-4bd1-b3f6-80534d2d5981\r"
 expect -re $prompt
-send "nmcli connection up ens18\r"
+send "nmcli connection up $adapter\r"
 expect -re $prompt
 
 send "chmod 777 /etc/NetworkManager/system-connections/ens18.nmconnection\r"
