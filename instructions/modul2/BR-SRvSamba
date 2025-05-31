@@ -70,7 +70,8 @@ forwarders { 8.8.8.8; };
 Добавьте в конец списка с директивами include строку:
 include "/var/lib/samba/bind-dns/named.conf";
 
-
+Настройка samba в интерактивном режиме
+samba-tool domain provision --use-rfc2307 --interactive
 
 Настройки сервера находятся в файле /etc/samba/smb.conf
 nano /etc/samba/smb.conf
