@@ -107,6 +107,18 @@ expect -re $prompt
 send "chmod 777 /etc/krb5.conf\r"
 expect -re $prompt
 
+send "echo -e '\[libdefaults\]' > /etc/krb5.conf.d/crypto-policies\r"
+expect -re $prompt
+send "echo -e 'default_tgs_enctypes = aes256-cts-hmac-sha1-96 aes128-cts-hmac-sha1-96 RC4-HMAC DES-CBC-CRC DES3-CBC-SHA1 DES-CBC-MD5' >> /etc/krb5.conf.d/crypto-policies\r"
+expect -re $prompt
+send "echo -e 'default_tkt_enctypes = aes256-cts-hmac-sha1-96 aes128-nanocts-hmac-sha1-96 RC4-HMAC DES-CBC-CRC DES3-CBC-SHA1 DES-CBC-MD5' >> /etc/krb5.conf.d/crypto-policies\r"
+expect -re $prompt
+send "echo -e 'preferred_enctypes = aes256-cts-hmac-sha1-96 aes128-cts-hmac-sha1-96 RC4-HMAC DES-CBC-CRC DES3-CBC-SHA1 DES-CBC-MD5' >> /etc/krb5.conf.d/crypto-policies\r"
+expect -re $prompt
+
+send "chmod 777 /etc/krb5.conf.d/crypto-policies\r"
+expect -re $prompt
+
 # Перезагрузка системы
 send "exit\r"
 expect eof
