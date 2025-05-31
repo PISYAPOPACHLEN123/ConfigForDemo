@@ -55,7 +55,7 @@ expect -re $prompt
 send "echo -e '\[proxy\]' >> /etc/NetworkManager/system-connections/enp0s3.nmconnection\r"
 expect -re $prompt
 
-send "chmod 600 /etc/NetworkManager/system-connections/enp0s3.nmconnection\r"
+send "chmod 777 /etc/NetworkManager/system-connections/enp0s3.nmconnection\r"
 expect -re $prompt
 
 send "systemctl restart NetworkManager\r"
@@ -68,6 +68,65 @@ send "cp /etc/krb5.conf /etc/krb5.conf.bak\r"
 expect -re $prompt
 
 send "chown root:named /etc/krb5.conf\r"
+expect -re $prompt
+
+#nano /etc/krb5.conf
+send "echo -e '# To opt out of the system crypto-policies configuration of krb5, remove the' > /etc/krb5.conf\r"
+expect -re $prompt
+send "echo -e '# symlink at /etc/krb5.conf.d/crypto-policies which will not be recreated.' >> /etc/krb5.conf\r"
+expect -re $prompt
+send "echo -e 'includedir /etc/krb5.conf.d/' >> /etc/krb5.conf\r"
+expect -re $prompt
+send "echo -e '\[logging\]' >> /etc/krb5.conf\r"
+expect -re $prompt
+send "echo -e '    default = FILE:/var/log/krb5libs.log' >> /etc/krb5.conf\r"
+expect -re $prompt
+send "echo -e '    kdc = FILE:/var/log/krb5kdc.log' >> /etc/krb5.conf\r"
+expect -re $prompt
+send "echo -e '    admin_server = FILE:/var/log/kadmind.log' >> /etc/krb5.conf\r"
+expect -re $prompt
+send "echo -e '\[libdefaults\]' >> /etc/krb5.conf\r"
+expect -re $prompt
+send "echo -e '    dns_lookup_realm = false' >> /etc/krb5.conf\r"
+expect -re $prompt
+send "echo -e '    ticket_lifetime = 24h' >> /etc/krb5.conf\r"
+expect -re $prompt
+send "echo -e '    renew_lifetime = 7d' >> /etc/krb5.conf\r"
+expect -re $prompt
+send "echo -e '    forwardable = true' >> /etc/krb5.conf\r"
+expect -re $prompt
+send "echo -e '    rdns = false' >> /etc/krb5.conf\r"
+expect -re $prompt
+send "echo -e '    pkinit_anchors = FILE:/etc/pki/tls/certs/ca-bundle.crt' >> /etc/krb5.conf\r"
+expect -re $prompt
+send "echo -e '    spake_preauth_groups = edwards25519' >> /etc/krb5.conf\r"
+expect -re $prompt
+send "echo -e '    dns_canonicalize_hostname = fallback' >> /etc/krb5.conf\r"
+expect -re $prompt
+send "echo -e '    qualify_shortname = \"\"' >> /etc/krb5.conf\r"
+expect -re $prompt
+send "echo -e '    default_realm = AU-TEAM.IRPO' >> /etc/krb5.conf\r"
+expect -re $prompt
+send "echo -e '    default_ccache_name = KEYRING:persistent:%{uid}' >> /etc/krb5.conf\r"
+expect -re $prompt
+send "echo -e '\[realms\]' >> /etc/krb5.conf\r"
+expect -re $prompt
+send "echo -e ' AU-TEAM.IRPO = {' >> /etc/krb5.conf\r"
+expect -re $prompt
+send "echo -e '   kdc = br-srv.au-team.irpo' >> /etc/krb5.conf\r"
+expect -re $prompt
+send "echo -e '   admin_server = br-srv.au-team.irpo' >> /etc/krb5.conf\r"
+expect -re $prompt
+send "echo -e ' }' >> /etc/krb5.conf\r"
+expect -re $prompt
+send "echo -e '\[domain_realm\]' >> /etc/krb5.conf\r"
+expect -re $prompt
+send "echo -e ' .au-team.irpo = AU-TEAM.IRPO' >> /etc/krb5.conf\r"
+expect -re $prompt
+send "echo -e ' au-team.irpo = AU-TEAM.IRPO' >> /etc/krb5.conf\r"
+expect -re $prompt
+
+send "chmod 777 /etc/krb5.conf\r"
 expect -re $prompt
 
 # Перезагрузка системы
