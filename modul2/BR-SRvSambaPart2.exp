@@ -70,7 +70,7 @@ expect -re "#"
 send "echo 'local stratum 5' >> /etc/chrony.conf\r"
 expect -re "#"
 
-send "systemctl enable chronyd –now\r"
+send "systemctl enable chronyd –-now\r"
 expect -re "#"
 
 # Перезагрузка системы
