@@ -13,9 +13,6 @@ ping *addres ili domen* - proverit svaz
 
 
 ---zapusk skripta:
-chmod +x *imya_skripta.sh*
-sudo ./*imya_skripta.sh*
-ili
 expect *imya_skripta.exp*
 
 
