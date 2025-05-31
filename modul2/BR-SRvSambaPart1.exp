@@ -61,6 +61,15 @@ expect -re $prompt
 send "systemctl restart NetworkManager\r"
 expect -re $prompt
 
+send "mv /etc/samba/smb.conf /etc/samba/smb.conf.bak\r"
+expect -re $prompt
+
+send "cp /etc/krb5.conf /etc/krb5.conf.bak\r"
+expect -re $prompt
+
+send "chown root:named /etc/krb5.conf\r"
+expect -re $prompt
+
 # Перезагрузка системы
 send "exit\r"
 expect eof
