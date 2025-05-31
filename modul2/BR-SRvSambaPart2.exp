@@ -3,6 +3,7 @@
 # Настройка переменных
 set timeout 60
 set prompt "#"
+set admin_password "qwerty123!"
 
 # Запуск терминала
 spawn bash
@@ -61,6 +62,15 @@ expect -re "#"
 send "samba_dnsupdate --verbose –all-names\r"
 expect -re "#"
 send "kinit administrator@AU-TEAM.IRPO\r"
+expect -re "Password for administrator@AU-TEAM.IRPO:"
+send "$admin_password\r"
+expect -re "#"
+
+#/etc/chrony.conf
+send "echo 'local stratum 5' >> /etc/chrony.conf\r"
+expect -re "#"
+
+send "systemctl enable chronyd –now\r"
 expect -re "#"
 
 # Перезагрузка системы
