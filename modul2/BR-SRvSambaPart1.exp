@@ -22,39 +22,13 @@ expect -re $prompt
 send "sed -i 's/^SELINUX=.*/SELINUX=permissive/' /etc/selinux/config\r"
 expect -re $prompt
 
-# Удаление существующего подключения, если оно есть (чтобы избежать конфликтов)
-send "nmcli connection delete ens18\r"
+# Удаление всех существующих подключений
+send "nmcli connection show | grep -v NAME | awk '{print \$1}' | xargs -I {} nmcli connection delete {}\r"
 expect -re $prompt
 
-# Создание нового подключения
-send "nmcli connection add type ethernet con-name ens18 ifname ens18\r"
+# Создание и активация подключения для ens18
+send "nmcli connection add type ethernet con-name ens18 ifname ens18 ipv4.method manual ipv4.addresses 192.168.3.2/27 ipv4.gateway 192.168.3.1 ipv4.dns 192.168.3.2 ipv4.dns-search au-team.irpo ipv4.ignore-auto-dns true ipv6.addr-gen-mode default ipv6.method disabled connection.uuid a58a9970-625b-4bd1-b3f6-80534d2d5981\r"
 expect -re $prompt
-
-# Установка UUID
-send "nmcli connection modify ens18 connection.uuid a58a9970-625b-4bd1-b3f6-80534d2d5981\r"
-expect -re $prompt
-
-# Настройка IPv4
-send "nmcli connection modify ens18 ipv4.addresses 192.168.3.2/27\r"
-expect -re $prompt
-send "nmcli connection modify ens18 ipv4.gateway 192.168.3.1\r"
-expect -re $prompt
-send "nmcli connection modify ens18 ipv4.dns 192.168.3.2\r"
-expect -re $prompt
-send "nmcli connection modify ens18 ipv4.dns-search au-team.irpo\r"
-expect -re $prompt
-send "nmcli connection modify ens18 ipv4.method manual\r"
-expect -re $prompt
-send "nmcli connection modify ens18 ipv4.ignore-auto-dns true\r"
-expect -re $prompt
-
-# Настройка IPv6
-send "nmcli connection modify ens18 ipv6.addr-gen-mode default\r"
-expect -re $prompt
-send "nmcli connection modify ens18 ipv6.method disabled\r"
-expect -re $prompt
-
-# Применение изменений
 send "nmcli connection up ens18\r"
 expect -re $prompt
 
