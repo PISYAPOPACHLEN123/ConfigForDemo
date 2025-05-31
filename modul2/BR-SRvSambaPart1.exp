@@ -22,37 +22,40 @@ expect -re $prompt
 send "sed -i 's/^SELINUX=.*/SELINUX=permissive/' /etc/selinux/config\r"
 expect -re $prompt
 
-send "echo -e '\[connection\]' > /etc/NetworkManager/system-connections/ens18.nmconnection\r"
+# Удаление существующего подключения, если оно есть (чтобы избежать конфликтов)
+send "nmcli connection delete ens18\r"
 expect -re $prompt
-send "echo -e 'id=ens18' >> /etc/NetworkManager/system-connections/ens18.nmconnection\r"
+
+# Создание нового подключения
+send "nmcli connection add type ethernet con-name ens18 ifname ens18\r"
 expect -re $prompt
-send "echo -e 'uuid=a58a9970-625b-4bd1-b3f6-80534d2d5981' >> /etc/NetworkManager/system-connections/ens18.nmconnection\r"
+
+# Установка UUID
+send "nmcli connection modify ens18 connection.uuid a58a9970-625b-4bd1-b3f6-80534d2d5981\r"
 expect -re $prompt
-send "echo -e 'type=ethernet' >> /etc/NetworkManager/system-connections/ens18.nmconnection\r"
+
+# Настройка IPv4
+send "nmcli connection modify ens18 ipv4.addresses 192.168.3.2/27\r"
 expect -re $prompt
-send "echo -e 'interface-name=ens18' >> /etc/NetworkManager/system-connections/ens18.nmconnection\r"
+send "nmcli connection modify ens18 ipv4.gateway 192.168.3.1\r"
 expect -re $prompt
-send "echo -e '\[ethernet\]' >> /etc/NetworkManager/system-connections/ens18.nmconnection\r"
+send "nmcli connection modify ens18 ipv4.dns 192.168.3.2\r"
 expect -re $prompt
-send "echo -e '\[ipv4\]' >> /etc/NetworkManager/system-connections/ens18.nmconnection\r"
+send "nmcli connection modify ens18 ipv4.dns-search au-team.irpo\r"
 expect -re $prompt
-send "echo -e 'address1=192.168.3.2/27,192.168.3.1' >> /etc/NetworkManager/system-connections/ens18.nmconnection\r"
+send "nmcli connection modify ens18 ipv4.method manual\r"
 expect -re $prompt
-send "echo -e 'dns=192.168.3.2;' >> /etc/NetworkManager/system-connections/ens18.nmconnection\r"
+send "nmcli connection modify ens18 ipv4.ignore-auto-dns true\r"
 expect -re $prompt
-send "echo -e 'method=manual' >> /etc/NetworkManager/system-connections/ens18.nmconnection\r"
+
+# Настройка IPv6
+send "nmcli connection modify ens18 ipv6.addr-gen-mode default\r"
 expect -re $prompt
-send "echo -e 'ignore-auto-dns=true' >> /etc/NetworkManager/system-connections/ens18.nmconnection\r"
+send "nmcli connection modify ens18 ipv6.method disabled\r"
 expect -re $prompt
-send "echo -e 'dns-search=au-team.irpo;' >> /etc/NetworkManager/system-connections/ens18.nmconnection\r"
-expect -re $prompt
-send "echo -e '\[ipv6\]' >> /etc/NetworkManager/system-connections/ens18.nmconnection\r"
-expect -re $prompt
-send "echo -e 'addr-gen-mode=default' >> /etc/NetworkManager/system-connections/ens18.nmconnection\r"
-expect -re $prompt
-send "echo -e 'method=disabled' >> /etc/NetworkManager/system-connections/ens18.nmconnection\r"
-expect -re $prompt
-send "echo -e '\[proxy\]' >> /etc/NetworkManager/system-connections/ens18.nmconnection\r"
+
+# Применение изменений
+send "nmcli connection up ens18\r"
 expect -re $prompt
 
 send "chmod 777 /etc/NetworkManager/system-connections/ens18.nmconnection\r"
