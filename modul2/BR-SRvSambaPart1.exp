@@ -120,64 +120,133 @@ send "chmod 777 /etc/krb5.conf.d/crypto-policies\r"
 expect -re $prompt
 
 #nano /etc/named.conf
-//
-// named.conf
-//
-// Provided by Red Hat bind package to configure the ISC BIND named(8) DNS
-// server as a caching only nameserver (as a localhost DNS resolver only).
-//
-// See /usr/share/doc/bind*/sample/ for example named configuration files.
-//
+send "echo '#nano /etc/named.conf' > /etc/named.conf\r"
+expect -re "#"
+send "echo '' >> /etc/named.conf\r"
+expect -re "#"
+send "echo '// named.conf' >> /etc/named.conf\r"
+expect -re "#"
+send "echo '//' >> /etc/named.conf\r"
+expect -re "#"
+send "echo '// Provided by Red Hat bind package to configure the ISC BIND named(8) DNS' >> /etc/named.conf\r"
+expect -re "#"
+send "echo '// server as a caching only nameserver (as a localhost DNS resolver only).' >> /etc/named.conf\r"
+expect -re "#"
+send "echo '//' >> /etc/named.conf\r"
+expect -re "#"
+send "echo '// See /usr/share/doc/bind*/sample/ for example named configuration files.' >> /etc/named.conf\r"
+expect -re "#"
+send "echo '//' >> /etc/named.conf\r"
+expect -re "#"
+send "echo 'options {' >> /etc/named.conf\r"
+expect -re "#"
+send "echo '        listen-on port 53 { 127.0.0.1; 192.168.3.2; };' >> /etc/named.conf\r"
+expect -re "#"
+send "echo '        listen-on-v6 port 53 { ::1; };' >> /etc/named.conf\r"
+expect -re "#"
+send "echo '        directory       \"/var/named\";' >> /etc/named.conf\r"
+expect -re "#"
+send "echo '        dump-file       \"/var/named/data/cache_dump.db\";' >> /etc/named.conf\r"
+expect -re "#"
+send "echo '        statistics-file \"/var/named/data/named_stats.txt\";' >> /etc/named.conf\r"
+expect -re "#"
+send "echo '        memstatistics-file \"/var/named/data/named_mem_stats.txt\";' >> /etc/named.conf\r"
+expect -re "#"
+send "echo '        secroots-file   \"/var/named/data/named.secroots\";' >> /etc/named.conf\r"
+expect -re "#"
+send "echo '        recursing-file  \"/var/named/data/named.recursing\";' >> /etc/named.conf\r"
+expect -re "#"
+send "echo '        allow-query     { any; };' >> /etc/named.conf\r"
+expect -re "#"
+send "echo '        tkey-gssapi-keytab \"/var/lib/samba/bind-dns/dns.keytab\";' >> /etc/named.conf\r"
+expect -re "#"
+send "echo '        minimal-responses yes;' >> /etc/named.conf\r"
+expect -re "#"
+send "echo '        forwarders { 8.8.8.8; };' >> /etc/named.conf\r"
+expect -re "#"
+send "echo '' >> /etc/named.conf\r"
+expect -re "#"
+send "echo '        /*' >> /etc/named.conf\r"
+expect -re "#"
+send "echo '         - If you are building an AUTHORITATIVE DNS server, do NOT enable recursion.' >> /etc/named.conf\r"
+expect -re "#"
+send "echo '         - If you are building a RECURSIVE (caching) DNS server, you need to enable' >> /etc/named.conf\r"
+expect -re "#"
+send "echo '           recursion.' >> /etc/named.conf\r"
+expect -re "#"
+send "echo '         - If your recursive DNS server has a public IP address, you MUST enable access' >> /etc/named.conf\r"
+expect -re "#"
+send "echo '           control to limit queries to your legitimate users. Failing to do so will' >> /etc/named.conf\r"
+expect -re "#"
+send "echo '           cause your server to become part of large scale DNS amplification' >> /etc/named.conf\r"
+expect -re "#"
+send "echo '           attacks. Implementing BCP38 within your network would greatly' >> /etc/named.conf\r"
+expect -re "#"
+send "echo '           reduce such attack surface' >> /etc/named.conf\r"
+expect -re "#"
+send "echo '        */' >> /etc/named.conf\r"
+expect -re "#"
+send "echo '        recursion yes;' >> /etc/named.conf\r"
+expect -re "#"
+send "echo '' >> /etc/named.conf\r"
+expect -re "#"
+send "echo '        dnssec-validation no;' >> /etc/named.conf\r"
+expect -re "#"
+send "echo '' >> /etc/named.conf\r"
+expect -re "#"
+send "echo '        managed-keys-directory \"/var/named/dynamic\";' >> /etc/named.conf\r"
+expect -re "#"
+send "echo '        geoip-directory \"/usr/share/GeoIP\";' >> /etc/named.conf\r"
+expect -re "#"
+send "echo '' >> /etc/named.conf\r"
+expect -re "#"
+send "echo '        pid-file \"/run/named/named.pid\";' >> /etc/named.conf\r"
+expect -re "#"
+send "echo '        session-keyfile \"/run/named/session.key\";' >> /etc/named.conf\r"
+expect -re "#"
+send "echo '' >> /etc/named.conf\r"
+expect -re "#"
+send "echo '        /* https://fedoraproject.org/wiki/Changes/CryptoPolicy */' >> /etc/named.conf\r"
+expect -re "#"
+send "echo '        include \"/etc/crypto-policies/back-ends/bind.config\";' >> /etc/named.conf\r"
+expect -re "#"
+send "echo '};' >> /etc/named.conf\r"
+expect -re "#"
+send "echo '' >> /etc/named.conf\r"
+expect -re "#"
+send "echo 'logging {' >> /etc/named.conf\r"
+expect -re "#"
+send "echo '        channel default_debug {' >> /etc/named.conf\r"
+expect -re "#"
+send "echo '                file \"data/named.run\";' >> /etc/named.conf\r"
+expect -re "#"
+send "echo '                severity dynamic;' >> /etc/named.conf\r"
+expect -re "#"
+send "echo '        };' >> /etc/named.conf\r"
+expect -re "#"
+send "echo '};' >> /etc/named.conf\r"
+expect -re "#"
+send "echo '' >> /etc/named.conf\r"
+expect -re "#"
+send "echo 'zone \".\" IN {' >> /etc/named.conf\r"
+expect -re "#"
+send "echo '        type hint;' >> /etc/named.conf\r"
+expect -re "#"
+send "echo '        file \"named.ca\";' >> /etc/named.conf\r"
+expect -re "#"
+send "echo '};' >> /etc/named.conf\r"
+expect -re "#"
+send "echo '' >> /etc/named.conf\r"
+expect -re "#"
+send "echo 'include \"/etc/named.rfc1912.zones\";' >> /etc/named.conf\r"
+expect -re "#"
+send "echo 'include \"/etc/named.root.key\";' >> /etc/named.conf\r"
+expect -re "#"
+send "echo 'include \"/var/lib/samba/bind-dns/named.conf\";' >> /etc/named.conf\r"
+expect -re "#"
 
-options {
-        listen-on port 53 { 127.0.0.1; 192.168.3.2; };
-        listen-on-v6 port 53 { ::1; };
-        directory       "/var/named";
-        dump-file       "/var/named/data/cache_dump.db";
-        statistics-file "/var/named/data/named_stats.txt";
-        memstatistics-file "/var/named/data/named_mem_stats.txt";
-        secroots-file   "/var/named/data/named.secroots";
-        recursing-file  "/var/named/data/named.recursing";
-        allow-query     { any; };
-
-        /*
-         - If you are building an AUTHORITATIVE DNS server, do NOT enable recursion.
-         - If you are building a RECURSIVE (caching) DNS server, you need to enable
-           recursion.
-         - If your recursive DNS server has a public IP address, you MUST enable access
-           control to limit queries to your legitimate users. Failing to do so will
-           cause your server to become part of large scale DNS amplification
-           attacks. Implementing BCP38 within your network would greatly
-           reduce such attack surface
-        */
-        recursion yes;
-
-        dnssec-validation yes;
-
-        managed-keys-directory "/var/named/dynamic";
-        geoip-directory "/usr/share/GeoIP";
-
-        pid-file "/run/named/named.pid";
-        session-keyfile "/run/named/session.key";
-
-        /* https://fedoraproject.org/wiki/Changes/CryptoPolicy */
-        include "/etc/crypto-policies/back-ends/bind.config";
-};
-
-logging {
-        channel default_debug {
-                file "data/named.run";
-                severity dynamic;
-        };
-};
-
-zone "." IN {
-        type hint;
-        file "named.ca";
-};
-
-include "/etc/named.rfc1912.zones";
-include "/etc/named.root.key";
+send "echo 'samba-tool domain provision --use-rfc2307 --interactive\r"
+expect -re "#"
 
 # Перезагрузка системы
 send "exit\r"
