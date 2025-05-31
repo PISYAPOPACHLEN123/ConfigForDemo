@@ -1,3 +1,15 @@
+#!/usr/bin/expect -f
+
+# Настройка переменных
+set timeout 5000
+set prompt "#"
+set adapter "ens18"
+set admin_password "qwerty123!"
+
+# Запуск терминала
+spawn bash
+expect -re $prompt
+
 # nano /etc/samba/smb.conf
 send "echo '# nano /etc/samba/smb.conf' > /etc/samba/smb.conf\r"
 expect -re "#"
