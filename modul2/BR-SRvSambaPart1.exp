@@ -261,6 +261,10 @@ expect -re "Retype password:"
 send "$admin_password\r"
 expect -re "#"
 
+# Задержка на 20 секунд
+send "sleep 20\r"
+expect -re "#"
+
 # nano /etc/samba/smb.conf
 send "echo '# nano /etc/samba/smb.conf' > /etc/samba/smb.conf\r"
 expect -re "#"
