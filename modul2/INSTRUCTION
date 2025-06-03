@@ -16,7 +16,7 @@ Edit a connection
 # 1. ens18 — наш главный межзвёздный шлюз
 Profile name – ens18 (назвали в честь кота админа)
 Device – ens18 (да, это он, наш верный кабель!)
-IPv4 configuration – disabled (пусть DHCP сам пашет, лень руками всё делать)
+IPv4 configuration – disabled (пусть DHCP сам пашет, лень руками всё делать ОТКЛЮЧАЕМ НАХУЙ)
 IPv6 configuration – disabled (IPv6? Это что, для пришельцев? Отключаем!)
 
 # 2. ens19 — секретный туннель для шпионов
