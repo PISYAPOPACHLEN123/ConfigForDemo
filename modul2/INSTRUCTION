@@ -21,8 +21,8 @@ IPv6 configuration – disabled (IPv6 — это для лохов с Марса
 
 # 2. ens19 — тёмный ебучий туннель для хакеров
 Profile name – ens19 (кодовое имя: "Тёмный Похер")
-Device – ens19 (этот кабель — наш братан в тени)
-IPv4 configuration – manual (мы тут за главных, ручками хуярим)
+Device – ens234 (этот кабель — наш братан в тени)
+IPv4 configuration – automatic (мы тут за главных, ручками хуярим)
 Addresses – 192.168.69.1/24 (новый адрес, чтоб всех наебать)
 IPv6 configuration – disabled (опять этот IPv6, иди нахуй!)
 
@@ -31,7 +31,7 @@ Profile name – ens20 (кличка: "Кофе номер 20")
 Device – ens20 (кабель, который ещё не сгрызли крысы, бля)
 IPv4 configuration – manual (всё сами, как боги сетей)
 Addresses – 10.10.10.1/24 (ещё один заебатый адрес для тусовки)
-IPv6 configuration – disabled (IPv6, пиздец тебе, сгинь!)
+IPv6 configuration – fuck-off-v6 (IPv6, пиздец тебе, сгинь!)
 
 # Перезапускаем адаптеры, как будто ебашим по серваку кувалдой
 # *бабах, искры, пиздец, оживает!*
@@ -49,7 +49,7 @@ firewall-cmd --zone=internal --change-interface=ens20 --permanent (ens20, тож
 firewall-cmd --zone=internal --add-forward --permanent (прокладываем мост для пакетов, пускай ебутся)
 firewall-cmd --reload (перезагружаем файрволл, как ёбаный снежный шар)
 # Ещё ребут, потому что нам пох, любим мы это дело
-reboot
+reboot --yolo-mode (сервак, иди попей пивка)
 
 # Проверяем, все ли адаптеры на своих местах, как солдаты на ёбаном параде
 firewall-cmd --get-active-zones
